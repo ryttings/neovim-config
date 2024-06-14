@@ -1,0 +1,14 @@
+-- return {"nvim-treesitter/nvim-treesitter",
+--  opts = { ensure_installed = { "c",
+--  "cpp",
+--  "python",
+--  "rust",
+--  "lua" }
+--  },
+-- 
+--  configs = {
+-- 	  {highlight = { enable = true}},
+-- 	  {indent = { enable = true}}
+--   }
+--  }
+
