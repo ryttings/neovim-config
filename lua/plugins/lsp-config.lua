@@ -29,10 +29,14 @@ return{
       lspconfig.jsonls.setup({})
       lspconfig.svls.setup({})
 
-      vim.keymap.set('n', '<C-i>', vim.lsp.buf.hover, {})
-      vim.keymap.set('n', '<M-g>', vim.lsp.buf.definition, {})
-      vim.keymap.set('n', '<M-r>', vim.lsp.buf.code_action, {})
+      vim.keymap.set('n', '<leader>q', vim.lsp.buf.hover, {})
+      vim.keymap.set('n', '<leader>g', vim.lsp.buf.definition, {})
+      vim.keymap.set('n', '<leader>ge', vim.lsp.buf.implementation, {})
+      vim.keymap.set('n', '<leader>r', vim.lsp.buf.code_action, {})
       vim.keymap.set('n', '<F12>', vim.lsp.buf.references, {})
+      vim.keymap.set('n', '<F1>', vim.lsp.buf.rename, {})
+      vim.keymap.set('n', '<leader>w', vim.lsp.buf.format)
+      vim.keymap.set('n', '<leader>d', vim.lsp.buf.document_symbol)
     end
   }
 }
