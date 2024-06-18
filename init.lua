@@ -2,7 +2,7 @@ vim.o.syntax = "on"
 vim.o.number = true
 
 --vim.cmd('cd $MYVIMRC/..')
-vim.cmd('cd D:/UsefulThings')
+-- vim.cmd('cd D:/UsefulThings')
 vim.cmd('set expandtab')
 vim.cmd('set tabstop=2')
 vim.cmd('set softtabstop=2')
