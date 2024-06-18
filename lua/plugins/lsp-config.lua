@@ -21,7 +21,8 @@ return{
       local lspconfig = require("lspconfig")
       lspconfig.pyright.setup({})
       lspconfig.lua_ls.setup({})
-      lspconfig.clangd.setup({})
+      lspconfig.clangd.setup({
+      })
       lspconfig.rust_analyzer.setup({})
       lspconfig.cmake.setup({})
       lspconfig.asm_lsp.setup({})
@@ -31,7 +32,7 @@ return{
 
       vim.keymap.set('n', '<leader>q', vim.lsp.buf.hover, {})
       vim.keymap.set('n', '<leader>g', vim.lsp.buf.definition, {})
-      vim.keymap.set('n', '<leader>ge', vim.lsp.buf.implementation, {})
+      vim.keymap.set('n', '<leader>gd', vim.lsp.buf.implementation, {})
       vim.keymap.set('n', '<leader>r', vim.lsp.buf.code_action, {})
       vim.keymap.set('n', '<F12>', vim.lsp.buf.references, {})
       vim.keymap.set('n', '<F1>', vim.lsp.buf.rename, {})
