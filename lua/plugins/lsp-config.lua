@@ -21,8 +21,7 @@ return{
       local lspconfig = require("lspconfig")
       lspconfig.pyright.setup({})
       lspconfig.lua_ls.setup({})
-      lspconfig.clangd.setup({
-      })
+      lspconfig.clangd.setup({})
       lspconfig.rust_analyzer.setup({})
       lspconfig.cmake.setup({})
       lspconfig.asm_lsp.setup({})
