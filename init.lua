@@ -10,6 +10,11 @@ vim.cmd('set shiftwidth=2')
 vim.cmd('let mapleader = ","')
 vim.cmd('map <leader>h :noh<CR>')
 vim.opt.shell = 'pwsh.exe'
+vim.opt.linebreak = true
+vim.keymap.set('n', '<Up>', 'gk')
+vim.keymap.set('n', '<Left>', 'gh')
+vim.keymap.set('n', '<Down>', 'gj')
+vim.keymap.set('n', '<Right>', 'gl')
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
