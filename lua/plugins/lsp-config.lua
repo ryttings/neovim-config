@@ -14,20 +14,38 @@ return{
     })
   end
   },
+
+
   {
     "neovim/nvim-lspconfig",
+    opts = {
+      setup = {
+        clangd = function(_, opts)
+          opts.capabilities.offsetEncoding = { "utf-16" }
+        end,
+      },
+    },
     lazy = false,
     config = function()
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
       local lspconfig = require("lspconfig")
-      lspconfig.pyright.setup({})
-      lspconfig.lua_ls.setup({})
-      lspconfig.clangd.setup({})
-      lspconfig.rust_analyzer.setup({})
-      lspconfig.cmake.setup({})
-      lspconfig.asm_lsp.setup({})
-      lspconfig.bashls.setup({})
-      lspconfig.jsonls.setup({})
-      lspconfig.svls.setup({})
+
+      lspconfig.pyright.setup({capabilities = capabilities,})
+      lspconfig.lua_ls.setup({capabilities = capabilities,})
+      lspconfig.clangd.setup({
+        capabilities = capabilities,
+        cmd = {
+          "clangd",
+          "--background-index",
+          "--query-driver=/usr/bin/g++",
+          }
+      })
+      lspconfig.rust_analyzer.setup({capabilities = capabilities,})
+      lspconfig.cmake.setup({capabilities = capabilities,})
+      lspconfig.asm_lsp.setup({capabilities = capabilities,})
+      lspconfig.bashls.setup({capabilities = capabilities,})
+      lspconfig.jsonls.setup({capabilities = capabilities,})
+      lspconfig.svls.setup({capabilities = capabilities,})
 
       vim.keymap.set('n', '<leader>q', vim.lsp.buf.hover, {})
       vim.keymap.set('n', '<leader>g', vim.lsp.buf.definition, {})
