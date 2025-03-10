@@ -4,9 +4,9 @@ vim.o.number = true
 --vim.cmd('cd $MYVIMRC/..')
 -- vim.cmd('cd D:/UsefulThings')
 vim.cmd('set expandtab')
-vim.cmd('set tabstop=3')
-vim.cmd('set softtabstop=3')
-vim.cmd('set shiftwidth=3')
+vim.cmd('set tabstop=4')
+vim.cmd('set softtabstop=4')
+vim.cmd('set shiftwidth=4')
 vim.cmd('let mapleader = ","')
 vim.cmd('map <leader>h :noh<CR>')
 vim.opt.linebreak = true
@@ -52,3 +52,23 @@ vim.cmd("set clipboard+=unnamedplus")
 vim.keymap.set('c', 'llm', function() vim.cmd('new') vim.cmd('terminal python3 /home/srytting/usefulthings/tools/llm.py') end)
 
 require("lazy").setup("plugins")
+
+function SendLineToGdb()
+  local line = vim.api.nvim_get_current_line()
+  -- Get all bufs and find terminal
+  local bufs = vim.api.nvim_list_bufs()
+  for _, buf in ipairs(bufs) do
+    if vim.api.nvim_buf_get_option(buf, 'buftype') == 'terminal' then
+      local name = vim.api.nvim_buf_get_name(buf)
+      if string.find(name, "fish") then
+         local chan = vim.api.nvim_buf_get_var(buf, 'terminal_job_id')
+         vim.api.nvim_chan_send(chan, line .. "\n")
+         return
+      else
+         print(name)
+      end
+    end
+  end
+  print("No terminals found.")
+end
+vim.keymap.set('n', '<leader>v', '<cmd>lua SendLineToGdb()<cr>')
