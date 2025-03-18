@@ -14,6 +14,8 @@ vim.opt.shellxquote = ''
 
 vim.cmd('let mapleader = ","')
 vim.cmd('map <leader>h :noh<CR>')
+vim.opt.shell = 'nu'
+vim.opt.linebreak = true
 vim.keymap.set('n', '<Up>', 'gk', { noremap = true })
 vim.keymap.set('n', '<Left>', 'gh', { noremap = true})
 vim.keymap.set('n', '<Down>', 'gj', { noremap = true})
