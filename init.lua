@@ -4,13 +4,16 @@ vim.o.number = true
 --vim.cmd('cd $MYVIMRC/..')
 -- vim.cmd('cd D:/UsefulThings')
 vim.cmd('set expandtab')
-vim.cmd('set tabstop=3')
-vim.cmd('set softtabstop=3')
-vim.cmd('set shiftwidth=3')
+vim.cmd('set tabstop=4')
+vim.cmd('set softtabstop=4')
+vim.cmd('set shiftwidth=4')
+vim.opt.linebreak = true
+vim.opt.shell = 'pwsh'
+vim.opt.shellcmdflag = '-nologo -noprofile -ExecutionPolicy RemoteSigned -command'
+vim.opt.shellxquote = ''
+
 vim.cmd('let mapleader = ","')
 vim.cmd('map <leader>h :noh<CR>')
-vim.opt.linebreak = true
-vim.opt.shell = "fish"
 vim.keymap.set('n', '<Up>', 'gk', { noremap = true })
 vim.keymap.set('n', '<Left>', 'gh', { noremap = true})
 vim.keymap.set('n', '<Down>', 'gj', { noremap = true})

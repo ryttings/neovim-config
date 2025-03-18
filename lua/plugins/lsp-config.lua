@@ -32,14 +32,14 @@ return{
 
       lspconfig.pyright.setup({capabilities = capabilities,})
       lspconfig.lua_ls.setup({capabilities = capabilities,})
-      lspconfig.clangd.setup({
-        capabilities = capabilities,
-        cmd = {
-          "clangd",
-          "--background-index",
-          "--query-driver=/usr/bin/g++",
-          }
-      })
+      -- lspconfig.clangd.setup({
+      --   capabilities = capabilities,
+      --   -- cmd = {
+      --   --   "clangd",
+      --   --   "--background-index",
+      --   --   -- "--query-driver=/usr/bin/g++",
+      --   --   }
+      -- })
       lspconfig.rust_analyzer.setup({capabilities = capabilities,})
       lspconfig.cmake.setup({capabilities = capabilities,})
       lspconfig.asm_lsp.setup({capabilities = capabilities,})
@@ -48,7 +48,7 @@ return{
       lspconfig.svls.setup({capabilities = capabilities,})
 
       vim.keymap.set('n', '<leader>q', vim.lsp.buf.hover, {})
-      vim.keymap.set('n', '<leader>g', vim.lsp.buf.definition, {})
+      -- vim.keymap.set('n', '<leader>g', vim.lsp.buf.definition, {})
       vim.keymap.set('n', '<leader>gd', vim.lsp.buf.implementation, {})
       vim.keymap.set('n', '<leader>r', vim.lsp.buf.code_action, {})
       vim.keymap.set('n', '<F12>', vim.lsp.buf.references, {})
