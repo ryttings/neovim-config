@@ -39,7 +39,7 @@ return {
                "clangd",
                "--offset-encoding=utf-16",
                "--background-index",
-               "--query-driver=/usr/bin/g++",
+               "--query-driver=/usr/bin/g++-14",
                "-j=8"
             }
          })

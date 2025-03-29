@@ -72,3 +72,5 @@ function SendLineToGdb()
   print("No terminals found.")
 end
 vim.keymap.set('n', '<leader>v', '<cmd>lua SendLineToGdb()<cr>')
+
+vim.opt.conceallevel = 2
