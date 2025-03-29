@@ -8,18 +8,17 @@ vim.cmd('set tabstop=4')
 vim.cmd('set softtabstop=4')
 vim.cmd('set shiftwidth=4')
 vim.opt.linebreak = true
-vim.opt.shell = 'pwsh'
+vim.opt.shell = 'pwsh.exe'
 vim.opt.shellcmdflag = '-nologo -noprofile -ExecutionPolicy RemoteSigned -command'
 vim.opt.shellxquote = ''
 
 vim.cmd('let mapleader = ","')
 vim.cmd('map <leader>h :noh<CR>')
-vim.opt.shell = 'nu'
 vim.opt.linebreak = true
 vim.keymap.set('n', '<Up>', 'gk', { noremap = true })
-vim.keymap.set('n', '<Left>', 'gh', { noremap = true})
-vim.keymap.set('n', '<Down>', 'gj', { noremap = true})
-vim.keymap.set('n', '<Right>', 'gl', { noremap = true})
+vim.keymap.set('n', '<Left>', 'gh', { noremap = true })
+vim.keymap.set('n', '<Down>', 'gj', { noremap = true })
+vim.keymap.set('n', '<Right>', 'gl', { noremap = true })
 vim.keymap.set('n', '<C-h>', '<C-w>h')
 vim.keymap.set('n', '<C-l>', '<C-w>l')
 vim.keymap.set('n', '<C-j>', '<C-w>j')
@@ -42,18 +41,25 @@ vim.opt.termguicolors = false
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable", -- latest stable release
-    lazypath,
-  })
+    vim.fn.system({
+        "git",
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git",
+        "--branch=stable", -- latest stable release
+        lazypath,
+    })
 end
 vim.opt.rtp:prepend(lazypath)
-vim.cmd("set clipboard+=unnamedplus")
+-- vim.cmd("set clipboard+=unnamedplus")
 
-vim.keymap.set('c', 'llm', function() vim.cmd('new') vim.cmd('terminal python3 /home/srytting/usefulthings/tools/llm.py') end)
+vim.keymap.set('c', 'llm',
+    function()
+        vim.cmd('new')
+        vim.cmd('terminal python3 /home/srytting/usefulthings/tools/llm.py')
+    end)
+
+-- Copy full path to clipboard
+vim.keymap.set('n', '<leader>p', function() vim.fn.setreg('+', vim.fn.expand('%:p')) end)
 
 require("lazy").setup("plugins")
