@@ -30,6 +30,7 @@ vim.keymap.set('n', '<C-Right>', '<C-w><S-l>')
 vim.keymap.set('n', '<C-Left>', '<C-w><S-h>')
 vim.keymap.set('n', '<C-Up>', '<C-w><S-k>')
 vim.keymap.set('n', '<C-Down>', '<C-w><S-j>')
+vim.keymap.set('n', '<C-=>', '<C-w>=', { noremap = true })
 
 vim.cmd('autocmd TermOpen * setlocal nonumber norelativenumber')
 vim.keymap.set('c', 'wqa', 'wa<CR>:qa<CR>', { noremap = true })
