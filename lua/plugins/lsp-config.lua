@@ -57,7 +57,27 @@ return {
          vim.keymap.set('n', '<F12>', vim.lsp.buf.references, {})
          vim.keymap.set('n', '<F1>', vim.lsp.buf.rename, {})
          vim.keymap.set('n', '<leader>w', vim.lsp.buf.format)
-         vim.keymap.set('n', '<leader>d', vim.lsp.buf.document_symbol)
-      end
-   }
+            -- vim.keymap.set('n', '<leader>d', vim.lsp.buf.document_symbol)
+
+            vim.keymap.set('n', ')', function() vim.diagnostic.jump({ count = 1 })end)
+            vim.keymap.set('n', ')', function() vim.diagnostic.jump({ count = -1 })end)
+            vim.diagnostic.config({
+                virtual_text = true,
+                virtual_lines = false,
+                float = {
+                    source = "always",
+                    border = "rounded",
+                },
+                signs = true,
+                underline = true,
+                update_in_insert = false,
+                severity_sort = true,
+            })
+
+            vim.keymap.set('n', '<leader>d', function()
+                vim.diagnostic.open_float({ scope = "cursor" })
+            end)
+            -- vim.keymap.set('n', '<leader>gle', vim.lsp.diagnostic.goto_prev)
+        end
+    }
 }
