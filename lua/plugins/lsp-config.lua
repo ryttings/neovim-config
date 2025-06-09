@@ -16,7 +16,6 @@ return {
       end
    },
 
-
    {
       "neovim/nvim-lspconfig",
       opts = {
