@@ -67,36 +67,16 @@ return {
             vim.keymap.set('n', '<F12>', vim.lsp.buf.references, {})
             vim.keymap.set('n', '<F1>', vim.lsp.buf.rename, {})
             vim.keymap.set('n', '<leader>w', vim.lsp.buf.format)
-
-            -- vim.keymap.set('n', '<leader>d', vim.lsp.buf.document_symbol)
-            -- Jump to the next diagnostic
-            vim.keymap.set('n', ')', function()
-                vim.diagnostic.jump({
-                    count = 1, -- Move forward by 1 diagnostic
-                })
-            end, { desc = 'Jump to next diagnostic' })
-            vim.keymap.set('n', '(', function()
-                vim.diagnostic.jump({
-                    count = 1, -- Move forward by 1 diagnostic
-                })
-            end, { desc = 'Jump to next diagnostic' })
-
+            vim.keymap.set('n', ')', function() vim.diagnostic.jump({ count = 1 })end)
+            vim.keymap.set('n', '(', function() vim.diagnostic.jump({ count = -1 })end)
 
             vim.diagnostic.config({
                 virtual_text = true,
-
-                -- Enable virtual lines
                 virtual_lines = false,
-                --     {
-                --     only_current_line = true,
-                -- }, -- This is the key setting for virtual lines
-
-                -- Other diagnostic display settings
                 float = {
                     source = "always",
                     border = "rounded",
                 },
-
                 signs = true,
                 underline = true,
                 update_in_insert = false,

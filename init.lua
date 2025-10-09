@@ -9,7 +9,6 @@ vim.opt.linebreak = true
 
 vim.cmd('let mapleader = ","')
 vim.cmd('map <leader>h :noh<CR>')
-vim.opt.linebreak = true
 vim.keymap.set('n', '<Up>', 'gk', { noremap = true })
 vim.keymap.set('n', '<Left>', 'gh', { noremap = true })
 vim.keymap.set('n', '<Down>', 'gj', { noremap = true })
@@ -25,14 +24,17 @@ vim.keymap.set('n', '<C-s><C-h>', ':vsp<CR>')
 vim.keymap.set('n', '<C-s><C-j>', ':spl<CR>')
 vim.keymap.set('n', '<C-s><C-k>', ':spl<CR>')
 vim.keymap.set('c', 'wqa', 'wa<CR>:qa<CR>', { noremap = true })
+vim.keymap.set('n', '<C-a>', 'gg0vG$')
 
 vim.keymap.set('n', '<C-Right>', '<C-w><S-l>')
 vim.keymap.set('n', '<C-Left>', '<C-w><S-h>')
 vim.keymap.set('n', '<C-Up>', '<C-w><S-k>')
 vim.keymap.set('n', '<C-Down>', '<C-w><S-j>')
+vim.keymap.set('n', '<C-=>', '<C-w>=', { noremap = true })
+vim.keymap.set('v', '<C-S-c>', '"+y')
 
-vim.keymap.set('v', '<leader>cl', ':s/\\U/\\l&/g', {noremap = true}, {desc = 'Convert to lowercase'})
-vim.keymap.set('v', '<leader>cu', ':s/\\l/\\U&/g', {noremap = true}, {desc = 'Convert to uppercase'})
+vim.keymap.set('v', '<leader>cl', ':s/\\U/\\l&/g', { noremap = true }, { desc = 'Convert to lowercase' })
+vim.keymap.set('v', '<leader>cu', ':s/\\l/\\U&/g', { noremap = true }, { desc = 'Convert to uppercase' })
 
 vim.cmd('autocmd TermOpen * setlocal nonumber norelativenumber')
 vim.opt.termguicolors = false
@@ -69,18 +71,22 @@ require("lazy").setup("plugins")
 
 local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
 parser_config.template_language = {
-  install_info = {
-    url = "~/repos/template/treesitter-parser",
-    files = {"src/parser.c"},
-    generate_requires_npm = false,
-    requires_generate_from_grammar = false,
-  },
-  filetype = "template_language",
+    install_info = {
+        url = "~/repos/template/treesitter-parser",
+        files = { "src/parser.c" },
+        generate_requires_npm = false,
+        requires_generate_from_grammar = false,
+    },
+    filetype = "template_language",
 }
 
 -- Register the filetype
 vim.filetype.add({
-  extension = {
-    tp = "template_language",
-  },
+    extension = {
+        tp = "template_language",
+    },
 })
+
+require("lazy").setup("plugins")
+
+vim.opt.conceallevel = 2

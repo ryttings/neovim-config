@@ -47,6 +47,8 @@ return {
         })
         require('mini.indentscope').setup()
 
+        require('mini.operators').setup()
+
         local ts_input = require('mini.surround').gen_spec.input.treesitter
         require('mini.surround').setup(
             {
@@ -89,7 +91,7 @@ return {
                 synchronize = '=',
                 trim_left   = '<',
                 trim_right  = '>',
-                set_cwd  = '.',
+                set_cwd     = '.',
             },
         })
         vim.keymap.set("n", "<leader>l", "<CMD>lua MiniFiles.open()<CR>")
