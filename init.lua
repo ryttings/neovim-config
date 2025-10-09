@@ -1,16 +1,11 @@
 vim.o.syntax = "on"
 vim.o.number = true
 
---vim.cmd('cd $MYVIMRC/..')
--- vim.cmd('cd D:/UsefulThings')
 vim.cmd('set expandtab')
 vim.cmd('set tabstop=4')
 vim.cmd('set softtabstop=4')
 vim.cmd('set shiftwidth=4')
 vim.opt.linebreak = true
-vim.opt.shell = 'pwsh.exe'
-vim.opt.shellcmdflag = '-nologo -noprofile -ExecutionPolicy RemoteSigned -command'
-vim.opt.shellxquote = ''
 
 vim.cmd('let mapleader = ","')
 vim.cmd('map <leader>h :noh<CR>')
@@ -29,15 +24,33 @@ vim.keymap.set('n', '<C-s><C-l>', ':vsp<CR>')
 vim.keymap.set('n', '<C-s><C-h>', ':vsp<CR>')
 vim.keymap.set('n', '<C-s><C-j>', ':spl<CR>')
 vim.keymap.set('n', '<C-s><C-k>', ':spl<CR>')
+vim.keymap.set('c', 'wqa', 'wa<CR>:qa<CR>', { noremap = true })
 
 vim.keymap.set('n', '<C-Right>', '<C-w><S-l>')
 vim.keymap.set('n', '<C-Left>', '<C-w><S-h>')
 vim.keymap.set('n', '<C-Up>', '<C-w><S-k>')
 vim.keymap.set('n', '<C-Down>', '<C-w><S-j>')
 
+vim.keymap.set('v', '<leader>cl', ':s/\\U/\\l&/g', {noremap = true}, {desc = 'Convert to lowercase'})
+vim.keymap.set('v', '<leader>cu', ':s/\\l/\\U&/g', {noremap = true}, {desc = 'Convert to uppercase'})
+
 vim.cmd('autocmd TermOpen * setlocal nonumber norelativenumber')
-vim.keymap.set('c', 'wqa', 'wa<CR>:qa<CR>', { noremap = true })
 vim.opt.termguicolors = false
+vim.opt.shell = 'nu.exe'
+
+local python_exe = os.getenv("PYTHON") or "python3"
+-- local llm_script = "C:/Users/scotrytt/usefulthings/tools/gemini.py"
+local llm_script = "C:/Users/scotrytt/usefulthings/tools/llm.py"
+vim.keymap.set('c', 'llm',
+    function()
+        vim.cmd('new')
+        vim.cmd('set shell=cmd.exe')
+        vim.cmd('terminal ' .. python_exe .. " " .. llm_script)
+        vim.cmd('set shell=nu.exe')
+    end)
+
+-- Copy full path to clipboard
+vim.keymap.set('n', '<leader>p', function() vim.fn.setreg('+', vim.fn.expand('%:p')) end)
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -51,15 +64,23 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
     })
 end
 vim.opt.rtp:prepend(lazypath)
--- vim.cmd("set clipboard+=unnamedplus")
-
-vim.keymap.set('c', 'llm',
-    function()
-        vim.cmd('new')
-        vim.cmd('terminal python3 /home/srytting/usefulthings/tools/llm.py')
-    end)
-
--- Copy full path to clipboard
-vim.keymap.set('n', '<leader>p', function() vim.fn.setreg('+', vim.fn.expand('%:p')) end)
 
 require("lazy").setup("plugins")
+
+local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+parser_config.template_language = {
+  install_info = {
+    url = "~/repos/template/treesitter-parser",
+    files = {"src/parser.c"},
+    generate_requires_npm = false,
+    requires_generate_from_grammar = false,
+  },
+  filetype = "template_language",
+}
+
+-- Register the filetype
+vim.filetype.add({
+  extension = {
+    tp = "template_language",
+  },
+})

@@ -3,7 +3,12 @@ return {
         "williamboman/mason.nvim",
         lazy = false,
         config = function()
-            require("mason").setup()
+            require("mason").setup({
+                registries = {
+                    "github:mason-org/mason-registry",
+                    "github:Crashdummyy/mason-registry",
+                },
+            })
         end
     },
     {
@@ -11,7 +16,7 @@ return {
         lazy = false,
         config = function()
             require("mason-lspconfig").setup({
-                ensure_installed = { "clangd", "pyright", "rust_analyzer", "cmake", "asm_lsp", "bashls", "jsonls", "lua_ls", "svls", "powershell-editor-services" }
+                ensure_installed = { "clangd", "pyright", "rust_analyzer", "cmake", "asm_lsp", "bashls", "jsonls", "lua_ls", "svls" }
             })
         end
     },
@@ -31,14 +36,21 @@ return {
             local capabilities = vim.lsp.protocol.make_client_capabilities()
             local lspconfig = require("lspconfig")
 
-            lspconfig.pyright.setup({ capabilities = capabilities, })
+            lspconfig.pyright.setup({
+                capabilities = capabilities,
+                settings = {
+                    python = {
+                        pythonPath = "C:/Users/scotrytt/AppData/Local/Programs/Python/Python313/python.exe"
+                    },
+                },
+            }
+            )
             lspconfig.lua_ls.setup({ capabilities = capabilities, })
             lspconfig.clangd.setup({
                 capabilities = capabilities,
                 cmd = {
                     "clangd",
                     "--background-index",
-                    -- "--query-driver=/usr/bin/g++",
                 }
             })
             lspconfig.rust_analyzer.setup({ capabilities = capabilities, })
@@ -47,8 +59,6 @@ return {
             lspconfig.bashls.setup({ capabilities = capabilities, })
             lspconfig.jsonls.setup({ capabilities = capabilities, })
             lspconfig.svls.setup({ capabilities = capabilities, })
-            lspconfig.powershell_editor_services.setup()
-
 
             vim.keymap.set('n', '<leader>q', vim.lsp.buf.hover, {})
             vim.keymap.set('n', '<leader>g', vim.lsp.buf.definition, {})
@@ -57,6 +67,7 @@ return {
             vim.keymap.set('n', '<F12>', vim.lsp.buf.references, {})
             vim.keymap.set('n', '<F1>', vim.lsp.buf.rename, {})
             vim.keymap.set('n', '<leader>w', vim.lsp.buf.format)
+
             -- vim.keymap.set('n', '<leader>d', vim.lsp.buf.document_symbol)
             -- Jump to the next diagnostic
             vim.keymap.set('n', ')', function()
@@ -69,6 +80,8 @@ return {
                     count = 1, -- Move forward by 1 diagnostic
                 })
             end, { desc = 'Jump to next diagnostic' })
+
+
             vim.diagnostic.config({
                 virtual_text = true,
 
