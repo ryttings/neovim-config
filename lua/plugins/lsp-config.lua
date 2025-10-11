@@ -15,7 +15,6 @@ return {
          })
       end
    },
-
    {
       "neovim/nvim-lspconfig",
       opts = {
@@ -27,27 +26,30 @@ return {
       },
       lazy = false,
       config = function()
-         local capabilities = vim.lsp.protocol.make_client_capabilities()
-         local lspconfig = require("lspconfig")
+         vim.lsp.config("*", {})
+         vim.lsp.config("clangd",
+            {
+               cmd = {
+                  "clangd",
+                  "--offset-encoding=utf-16",
+                  "--background-index",
+                  "--query-driver=/usr/bin/g++-15",
+                  "-j=8"
+               }
+            })
 
-         lspconfig.pyright.setup({ capabilities = capabilities, })
-         lspconfig.lua_ls.setup({ capabilities = capabilities, })
-         lspconfig.clangd.setup({
-            capabilities = capabilities,
-            cmd = {
-               "clangd",
-               "--offset-encoding=utf-16",
-               "--background-index",
-               "--query-driver=/usr/bin/g++-14",
-               "-j=8"
-            }
+         vim.lsp.enable({
+            "clangd",
+            "pyright",
+            "svls",
+            "cmake",
+            "bashls",
+            "jsonls",
+            "lua_ls",
+            "svls",
+            "rust_analyzer",
+            "asm_lsp",
          })
-         lspconfig.rust_analyzer.setup({ capabilities = capabilities, })
-         lspconfig.cmake.setup({ capabilities = capabilities, })
-         lspconfig.asm_lsp.setup({ capabilities = capabilities, })
-         lspconfig.bashls.setup({ capabilities = capabilities, })
-         lspconfig.jsonls.setup({ capabilities = capabilities, })
-         lspconfig.svls.setup({ capabilities = capabilities, })
 
          vim.keymap.set('n', '<leader>q', vim.lsp.buf.hover, {})
          vim.keymap.set('n', '<leader>g', vim.lsp.buf.definition, {})
@@ -56,27 +58,30 @@ return {
          vim.keymap.set('n', '<F12>', vim.lsp.buf.references, {})
          vim.keymap.set('n', '<F1>', vim.lsp.buf.rename, {})
          vim.keymap.set('n', '<leader>w', vim.lsp.buf.format)
-            -- vim.keymap.set('n', '<leader>d', vim.lsp.buf.document_symbol)
 
-            vim.keymap.set('n', ')', function() vim.diagnostic.jump({ count = 1 })end)
-            vim.keymap.set('n', ')', function() vim.diagnostic.jump({ count = -1 })end)
-            vim.diagnostic.config({
-                virtual_text = true,
-                virtual_lines = false,
-                float = {
-                    source = "always",
-                    border = "rounded",
-                },
-                signs = true,
-                underline = true,
-                update_in_insert = false,
-                severity_sort = true,
-            })
+         vim.keymap.set('n', ')', function()
+            vim.diagnostic.jump({ count = 1 })
+         end)
+         vim.keymap.set('n', '(', function()
+            vim.diagnostic.jump({ count = -1 })
+         end)
 
-            vim.keymap.set('n', '<leader>d', function()
-                vim.diagnostic.open_float({ scope = "cursor" })
-            end)
-            -- vim.keymap.set('n', '<leader>gle', vim.lsp.diagnostic.goto_prev)
-        end
-    }
+         vim.diagnostic.config({
+            virtual_text = true,
+            virtual_lines = false,
+            float = {
+               source = "always",
+               border = "rounded",
+            },
+            signs = true,
+            underline = true,
+            update_in_insert = false,
+            severity_sort = true,
+         })
+
+         vim.keymap.set('n', '<leader>d', function()
+            vim.diagnostic.open_float({ scope = "cursor" })
+         end)
+      end
+   }
 }
