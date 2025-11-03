@@ -41,8 +41,10 @@ vim.opt.termguicolors = false
 vim.opt.shell = 'nu.exe'
 
 local python_exe = os.getenv("PYTHON") or "python3"
--- local llm_script = "C:/Users/scotrytt/usefulthings/tools/gemini.py"
-local llm_script = "C:/Users/scotrytt/usefulthings/tools/llm.py"
+local usefulthings = os.getenv("USEFULTHINGS") or "~/usefulthings"
+
+local llm_py = "llm.py"
+local llm_script = string.format("%s/%s", usefulthings, llm_py)
 vim.keymap.set('c', 'llm',
     function()
         vim.cmd('new')
@@ -88,3 +90,5 @@ vim.filetype.add({
 })
 
 vim.opt.conceallevel = 2
+
+require("lsp")
