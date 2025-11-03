@@ -87,6 +87,4 @@ vim.filetype.add({
     },
 })
 
-require("lazy").setup("plugins")
-
 vim.opt.conceallevel = 2

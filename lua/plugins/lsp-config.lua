@@ -1,24 +1,14 @@
 return {
     {
         "williamboman/mason.nvim",
-        lazy = false,
-        config = function()
-            require("mason").setup({
-                registries = {
-                    "github:mason-org/mason-registry",
-                    "github:Crashdummyy/mason-registry",
-                },
-            })
-        end
+        opts = {}
     },
     {
         "williamboman/mason-lspconfig.nvim",
         lazy = false,
-        config = function()
-            require("mason-lspconfig").setup({
-                ensure_installed = { "clangd", "pyright", "rust_analyzer", "cmake", "asm_lsp", "bashls", "jsonls", "lua_ls", "svls" }
-            })
-        end
+        opts = {
+            ensure_installed = { "clangd", "pyright", "rust_analyzer", "cmake", "asm_lsp", "bashls", "jsonls", "lua_ls", "svls", "lemminx", "markdown_oxide" }
+        }
     },
 
 
@@ -34,31 +24,40 @@ return {
         lazy = false,
         config = function()
             local capabilities = vim.lsp.protocol.make_client_capabilities()
-            local lspconfig = require("lspconfig")
 
-            lspconfig.pyright.setup({
+            vim.lsp.config('pyright', {
                 capabilities = capabilities,
                 settings = {
                     python = {
                         pythonPath = "C:/Users/scotrytt/AppData/Local/Programs/Python/Python313/python.exe"
                     },
                 },
-            }
-            )
-            lspconfig.lua_ls.setup({ capabilities = capabilities, })
-            lspconfig.clangd.setup({
+            })
+
+            vim.lsp.config('lua_ls', {capabilities = capabilities})
+            vim.lsp.config('clangd', {
                 capabilities = capabilities,
                 cmd = {
                     "clangd",
-                    "--background-index",
+                    "--background-index"
                 }
             })
-            lspconfig.rust_analyzer.setup({ capabilities = capabilities, })
-            lspconfig.cmake.setup({ capabilities = capabilities, })
-            lspconfig.asm_lsp.setup({ capabilities = capabilities, })
-            lspconfig.bashls.setup({ capabilities = capabilities, })
-            lspconfig.jsonls.setup({ capabilities = capabilities, })
-            lspconfig.svls.setup({ capabilities = capabilities, })
+            vim.lsp.config('rust_analyzer', {capabilities = capabilities})
+            vim.lsp.config('cmake', {capabilities = capabilities})
+            vim.lsp.config('asm_lsp', {capabilities = capabilities})
+            vim.lsp.config('bashls', {capabilities = capabilities})
+            vim.lsp.config('jsonls', {capabilities = capabilities})
+            vim.lsp.config('svls', {capabilities = capabilities})
+            vim.lsp.config('lemminx', {capabilities = capabilities})
+            vim.lsp.config('markdown_oxide', {
+                capabilities = vim.tbl_deep_extend('force', capabilities, {
+                    workspace = {
+                        didChangeWatchedFiles = {
+                            dynamicRegistration = true,
+                        },
+                    },
+                })
+            })
 
             vim.keymap.set('n', '<leader>q', vim.lsp.buf.hover, {})
             vim.keymap.set('n', '<leader>g', vim.lsp.buf.definition, {})
@@ -67,12 +66,16 @@ return {
             vim.keymap.set('n', '<F12>', vim.lsp.buf.references, {})
             vim.keymap.set('n', '<F1>', vim.lsp.buf.rename, {})
             vim.keymap.set('n', '<leader>w', vim.lsp.buf.format)
-            vim.keymap.set('n', ')', function() vim.diagnostic.jump({ count = 1 })end)
-            vim.keymap.set('n', '(', function() vim.diagnostic.jump({ count = -1 })end)
+            vim.keymap.set('n', ')', function() vim.diagnostic.jump({ count = 1 }) end)
+            vim.keymap.set('n', '(', function() vim.diagnostic.jump({ count = -1 }) end)
 
             vim.diagnostic.config({
                 virtual_text = true,
                 virtual_lines = false,
+                {
+                    only_current_line = true,
+                },
+
                 float = {
                     source = "always",
                     border = "rounded",
