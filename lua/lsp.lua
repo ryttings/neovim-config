@@ -91,6 +91,7 @@ vim.lsp.enable("clangd")
 
 -- Markdown Oxide {{{
 vim.lsp.config('markdown_oxide', {
+    cmd= { "markdown-oxide" },
     capabilities = vim.tbl_deep_extend('force', capabilities, {
         workspace = {
             didChangeWatchedFiles = {
