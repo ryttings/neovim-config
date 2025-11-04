@@ -1,0 +1,349 @@
+-- Lsp capabilities and on_attach {{{
+-- Here we grab default Neovim capabilities and extend them with ones we want on top
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+capabilities.textDocument.foldingRange = {
+    dynamicRegistration = true,
+    lineFoldingOnly = true,
+}
+
+capabilities.textDocument.semanticTokens.multilineTokenSupport = true
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+vim.lsp.config("*", {
+    capabilities = capabilities,
+    on_attach = function(client, bufnr)
+        local ok, diag = pcall(require, "rj.extras.workspace-diagnostic")
+        if ok then
+            diag.populate_workspace_diagnostics(client, bufnr)
+        end
+    end,
+})
+-- }}}
+
+-- Disable the default keybinds {{{
+for _, bind in ipairs({ "grn", "gra", "gri", "grr", "grt" }) do
+    pcall(vim.keymap.del, "n", bind)
+end
+-- }}}
+
+-- Create keybindings, commands, inlay hints and autocommands on LSP attach {{{
+vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(ev)
+        local bufnr = ev.buf
+        local client = vim.lsp.get_client_by_id(ev.data.client_id)
+        if not client then
+            return
+        end
+        ---@diagnostic disable-next-line need-check-nil
+        if client.server_capabilities.completionProvider then
+            vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
+            -- vim.bo[bufnr].omnifunc = "v:lua.MiniCompletion.completefunc_lsp"
+        end
+        ---@diagnostic disable-next-line need-check-nil
+        if client.server_capabilities.definitionProvider then
+            vim.bo[bufnr].tagfunc = "v:lua.vim.lsp.tagfunc"
+        end
+
+        -- -- nightly has inbuilt completions, this can replace all completion plugins
+        -- if client:supports_method("textDocument/completion", bufnr) then
+        --   -- Enable auto-completion
+        --   vim.lsp.completion.enable(true, client.id, bufnr, { autotrigger = true })
+        -- end
+
+        --- Disable semantic tokens
+        ---@diagnostic disable-next-line need-check-nil
+        client.server_capabilities.semanticTokensProvider = nil
+    end
+})
+
+
+vim.lsp.config.clangd = {
+    cmd = {
+        "clangd",
+        "-j=" .. 2,
+        "--background-index",
+        "--clang-tidy",
+        "--inlay-hints",
+        "--fallback-style=llvm",
+        "--all-scopes-completion",
+        "--completion-style=detailed",
+        "--header-insertion=iwyu",
+        "--header-insertion-decorators",
+        "--pch-storage=memory",
+    },
+    filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
+    root_markers = {
+        "CMakeLists.txt",
+        ".clangd",
+        ".clang-tidy",
+        ".clang-format",
+        "compile_commands.json",
+        "compile_flags.txt",
+        "configure.ac",
+        ".git",
+        vim.uv.cwd(),
+    },
+}
+
+vim.lsp.enable("clangd")
+-- }}}
+
+-- Markdown Oxide {{{
+vim.lsp.config('markdown_oxide', {
+    capabilities = vim.tbl_deep_extend('force', capabilities, {
+        workspace = {
+            didChangeWatchedFiles = {
+                dynamicRegistration = true,
+            },
+        },
+    }),
+    filetypes = { 'markdown' },
+    root_markers = { '.moxide.toml', '.obsidian', '.git' },
+})
+vim.lsp.enable("markdown_oxide")
+--- }}}
+
+-- Rust {{{
+vim.lsp.config.rust_analyzer = {
+    filetypes = { "rust" },
+    cmd = { "rust-analyzer" },
+    workspace_required = true,
+    root_dir = function(buf, cb)
+        local root = vim.fs.root(buf, { "Cargo.toml", "rust-project.json" })
+        local out = vim.system({ "cargo", "metadata", "--no-deps", "--format-version", "1" }, { cwd = root }):wait()
+        if out.code ~= 0 then
+            return cb(root)
+        end
+
+        local ok, result = pcall(vim.json.decode, out.stdout)
+        if ok and result.workspace_root then
+            return cb(result.workspace_root)
+        end
+
+        return cb(root)
+    end,
+    settings = {
+        autoformat = false,
+        ["rust-analyzer"] = {
+            check = {
+                command = "clippy",
+            },
+        },
+    },
+}
+vim.lsp.enable("rust_analyzer")
+-- }}}
+
+-- Lua {{{
+vim.lsp.config.lua_ls = {
+    cmd = { "lua-language-server" },
+    filetypes = { "lua" },
+    root_markers = { ".luarc.json", ".git", vim.uv.cwd() },
+    settings = {
+        Lua = {
+            telemetry = {
+                enable = false,
+            },
+        },
+    },
+}
+vim.lsp.enable("lua_ls")
+-- }}}
+
+-- Python {{{
+vim.lsp.config.basedpyright = {
+    name = "basedpyright",
+    filetypes = { "python" },
+    cmd = { "basedpyright-langserver", "--stdio" },
+    settings = {
+        python = {
+            venvPath = vim.fn.expand("~") .. "/.virtualenvs",
+        },
+        basedpyright = {
+            disableOrganizeImports = true,
+            analysis = {
+                autoSearchPaths = true,
+                autoImportCompletions = true,
+                useLibraryCodeForTypes = true,
+                diagnosticMode = "openFilesOnly",
+                typeCheckingMode = "strict",
+                inlayHints = {
+                    variableTypes = true,
+                    callArgumentNames = true,
+                    functionReturnTypes = true,
+                    genericTypes = false,
+                },
+            },
+        },
+    },
+}
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "python",
+    callback = function()
+        local ok, venv = pcall(require, "rj.extras.venv")
+        if ok then
+            venv.setup()
+        end
+        local root = vim.fs.root(0, {
+            "pyproject.toml",
+            "setup.py",
+            "setup.cfg",
+            "requirements.txt",
+            "Pipfile",
+            "pyrightconfig.json",
+            ".git",
+            vim.uv.cwd(),
+        })
+        local client =
+            vim.lsp.start(vim.tbl_extend("force", vim.lsp.config.basedpyright, { root_dir = root }), { attach = false })
+        if client then
+            vim.lsp.buf_attach_client(0, client)
+        end
+    end,
+})
+-- }}}
+
+-- Bash {{{
+vim.lsp.config.bashls = {
+    cmd = { "bash-language-server", "start" },
+    filetypes = { "bash", "sh", "zsh" },
+    root_markers = { ".git", vim.uv.cwd() },
+    settings = {
+        bashIde = {
+            globPattern = vim.env.GLOB_PATTERN or "*@(.sh|.inc|.bash|.command)",
+        },
+    },
+}
+vim.lsp.enable("bashls")
+-- }}}
+
+-- HTML {{{
+vim.lsp.config.htmlls = {
+    cmd = { "vscode-html-language-server", "--stdio" },
+    filetypes = { "html" },
+    root_markers = { "package.json", ".git" },
+
+    init_options = {
+        configurationSection = { "html", "css", "javascript" },
+        embeddedLanguages = {
+            css = true,
+            javascript = true,
+        },
+        provideFormatter = true,
+    },
+}
+-- }}}
+
+-- Go {{{
+vim.lsp.config.gopls = {
+    cmd = { "gopls" },
+    filetypes = { "go", "gotempl", "gowork", "gomod" },
+    root_markers = { ".git", "go.mod", "go.work", vim.uv.cwd() },
+    settings = {
+        gopls = {
+            completeUnimported = true,
+            usePlaceholders = true,
+            analyses = {
+                unusedparams = true,
+            },
+            ["ui.inlayhint.hints"] = {
+                compositeLiteralFields = true,
+                constantValues = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+            },
+        },
+    },
+}
+vim.lsp.enable("gopls")
+-- }}}
+
+-- Start, Stop, Restart, Log commands {{{
+vim.api.nvim_create_user_command("LspStart", function()
+    vim.cmd.e()
+end, { desc = "Starts LSP clients in the current buffer" })
+
+vim.api.nvim_create_user_command("LspStop", function(opts)
+    for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
+        if opts.args == "" or opts.args == client.name then
+            client:stop(true)
+            vim.notify(client.name .. ": stopped")
+        end
+    end
+end, {
+    desc = "Stop all LSP clients or a specific client attached to the current buffer.",
+    nargs = "?",
+    complete = function(_, _, _)
+        local clients = vim.lsp.get_clients({ bufnr = 0 })
+        local client_names = {}
+        for _, client in ipairs(clients) do
+            table.insert(client_names, client.name)
+        end
+        return client_names
+    end,
+})
+
+vim.api.nvim_create_user_command("LspRestart", function()
+    local detach_clients = {}
+    for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
+        client:stop(true)
+        if vim.tbl_count(client.attached_buffers) > 0 then
+            detach_clients[client.name] = { client, vim.lsp.get_buffers_by_client_id(client.id) }
+        end
+    end
+    local timer = vim.uv.new_timer()
+    if not timer then
+        return vim.notify("Servers are stopped but havent been restarted")
+    end
+    timer:start(
+        100,
+        50,
+        vim.schedule_wrap(function()
+            for name, client in pairs(detach_clients) do
+                local client_id = vim.lsp.start(client[1].config, { attach = false })
+                if client_id then
+                    for _, buf in ipairs(client[2]) do
+                        vim.lsp.buf_attach_client(buf, client_id)
+                    end
+                    vim.notify(name .. ": restarted")
+                end
+                detach_clients[name] = nil
+            end
+            if next(detach_clients) == nil and not timer:is_closing() then
+                timer:close()
+            end
+        end)
+    )
+end, {
+    desc = "Restart all the language client(s) attached to the current buffer",
+})
+
+vim.api.nvim_create_user_command("LspLog", function()
+    vim.cmd.vsplit(vim.lsp.log.get_filename())
+end, {
+    desc = "Get all the lsp logs",
+})
+
+vim.api.nvim_create_user_command("LspInfo", function()
+    vim.cmd("silent checkhealth vim.lsp")
+end, {
+    desc = "Get all the information about all LSP attached",
+})
+-- }}}
+
+--- Key Bindings ---
+vim.keymap.set('n', '<leader>q', vim.lsp.buf.hover, {})
+vim.keymap.set('n', '<leader>g', vim.lsp.buf.definition, {})
+vim.keymap.set('n', '<leader>gd', vim.lsp.buf.implementation, {})
+vim.keymap.set('n', '<leader>r', vim.lsp.buf.code_action, {})
+vim.keymap.set('n', '<F12>', vim.lsp.buf.references, {})
+vim.keymap.set('n', '<F1>', vim.lsp.buf.rename, {})
+vim.keymap.set('n', '<leader>w', vim.lsp.buf.format)
+vim.keymap.set('n', ')', function() vim.diagnostic.jump({ count = 1 }) end)
+vim.keymap.set('n', '(', function() vim.diagnostic.jump({ count = -1 }) end)
+
+vim.keymap.set('n', '<leader>d', function()
+    vim.diagnostic.open_float({ scope = "cursor" })
+end)

@@ -38,7 +38,7 @@ vim.keymap.set('v', '<leader>cu', ':s/\\l/\\U&/g', { noremap = true }, { desc = 
 
 vim.cmd('autocmd TermOpen * setlocal nonumber norelativenumber')
 vim.opt.termguicolors = false
-vim.opt.shell = 'nu.exe'
+-- vim.opt.shell = 'nu.exe'
 
 local python_exe = os.getenv("PYTHON") or "python3"
 local usefulthings = os.getenv("USEFULTHINGS") or "~/usefulthings"
