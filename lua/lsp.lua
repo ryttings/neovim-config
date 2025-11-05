@@ -86,12 +86,11 @@ vim.lsp.config.clangd = {
     },
 }
 
-vim.lsp.enable("clangd")
 -- }}}
 
 -- Markdown Oxide {{{
 vim.lsp.config('markdown_oxide', {
-    cmd= { "markdown-oxide" },
+    cmd = { "markdown-oxide" },
     capabilities = vim.tbl_deep_extend('force', capabilities, {
         workspace = {
             didChangeWatchedFiles = {
@@ -102,7 +101,24 @@ vim.lsp.config('markdown_oxide', {
     filetypes = { 'markdown' },
     root_markers = { '.moxide.toml', '.obsidian', '.git' },
 })
-vim.lsp.enable("markdown_oxide")
+--- }}}
+
+-- CMake {{{
+vim.lsp.config('cmake', {
+    cmd = { "cmake-language-server" },
+    capabilities = capabilities,
+    filetypes = { 'cmake' },
+    root_markers = { 'CMakeLists.txt' },
+})
+--- }}}
+
+-- JSON {{{
+vim.lsp.config('jsonls', {
+    cmd = { "vscode-json-language-server" },
+    capabilities = capabilities,
+    filetypes = { 'json' },
+    root_markers = {},
+})
 --- }}}
 
 -- Rust {{{
@@ -133,7 +149,6 @@ vim.lsp.config.rust_analyzer = {
         },
     },
 }
-vim.lsp.enable("rust_analyzer")
 -- }}}
 
 -- Lua {{{
@@ -149,7 +164,6 @@ vim.lsp.config.lua_ls = {
         },
     },
 }
-vim.lsp.enable("lua_ls")
 -- }}}
 
 -- Python {{{
@@ -217,7 +231,6 @@ vim.lsp.config.bashls = {
         },
     },
 }
-vim.lsp.enable("bashls")
 -- }}}
 
 -- HTML {{{
@@ -258,7 +271,6 @@ vim.lsp.config.gopls = {
         },
     },
 }
-vim.lsp.enable("gopls")
 -- }}}
 
 -- Start, Stop, Restart, Log commands {{{
@@ -348,3 +360,15 @@ vim.keymap.set('n', '(', function() vim.diagnostic.jump({ count = -1 }) end)
 vim.keymap.set('n', '<leader>d', function()
     vim.diagnostic.open_float({ scope = "cursor" })
 end)
+
+vim.lsp.enable({
+    "clangd",
+    "rust_analyzer",
+    "cmake",
+    "bashls",
+    "jsonls",
+    "lua_ls",
+    "basedpyright",
+    "markdown_oxide",
+    "gopls"
+})
