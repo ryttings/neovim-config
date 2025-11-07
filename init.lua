@@ -40,17 +40,19 @@ vim.cmd('autocmd TermOpen * setlocal nonumber norelativenumber')
 vim.opt.termguicolors = false
 -- vim.opt.shell = 'nu.exe'
 
-local python_exe = os.getenv("PYTHON") or "python3"
+local python_cmd = os.getenv("PYTHON") or "python3"
 local usefulthings = os.getenv("USEFULTHINGS") or "~/usefulthings"
+local cmd_shell = os.getenv("CMD_SHELL") or vim.opt.shell
 
 local llm_py = "llm.py"
-local llm_script = string.format("%s/%s", usefulthings, llm_py)
+local llm_script = string.format("%s/tools/%s", usefulthings, llm_py)
 vim.keymap.set('c', 'llm',
     function()
         vim.cmd('new')
-        vim.cmd('set shell=cmd.exe')
-        vim.cmd('terminal ' .. python_exe .. " " .. llm_script)
-        vim.cmd('set shell=nu.exe')
+        local term_shell = vim.opt.shell
+        vim.opt.shell = cmd_shell
+        vim.cmd(string.format('terminal %s %s', python_cmd, llm_script))
+        vim.opt.shell = term_shell
     end)
 
 -- Copy full path to clipboard
