@@ -18,8 +18,9 @@ return {
                     "bashls",
                     "jsonls",
                     "lua_ls",
-                    "pyright",
-                    "markdown_oxide"
+                    "basedpyright",
+                    "markdown_oxide",
+                    -- "beautysh"
                 }
             })
         end

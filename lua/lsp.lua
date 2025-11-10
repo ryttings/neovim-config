@@ -172,15 +172,15 @@ vim.lsp.config.basedpyright = {
 -- ▾▾▾ Bash ▾▾▾ --
 vim.lsp.config.bashls = {
     cmd = { "bash-language-server", "start" },
-    filetypes = { "bash", "sh", "zsh" },
-    root_markers = { ".git", vim.uv.cwd() },
-    settings = {
-        bashIde = {
-            globPattern = vim.env.GLOB_PATTERN or "*@(.sh|.inc|.bash|.command)",
-        },
-    },
+    filetypes = { "bash", "sh", "zsh" }
 }
 vim.lsp.enable("bashls")
+
+-- vim.lsp.config.beautysh = {
+--     cmd = { "beautysh" },
+--     filetypes = { "bash", "sh", "zsh" }
+-- }
+-- vim.lsp.enable("beautysh")
 -- ^^^ Bash ^^^ --
 
 -- ▾▾▾ HTML ▾▾▾ --
