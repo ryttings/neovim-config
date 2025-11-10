@@ -11,13 +11,7 @@ capabilities.textDocument.semanticTokens.multilineTokenSupport = true
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 vim.lsp.config("*", {
-    capabilities = capabilities,
-    on_attach = function(client, bufnr)
-        local ok, diag = pcall(require, "rj.extras.workspace-diagnostic")
-        if ok then
-            diag.populate_workspace_diagnostics(client, bufnr)
-        end
-    end,
+    capabilities = capabilities
 })
 
 -- Disable the default keybinds
@@ -25,31 +19,6 @@ for _, bind in ipairs({ "grn", "gra", "gri", "grr", "grt" }) do
     pcall(vim.keymap.del, "n", bind)
 end
 -- ^^^ Setup ^^^ --
-
--- ▾▾▾ LSP Attach ▾▾▾ --
-vim.api.nvim_create_autocmd("LspAttach", {
-    callback = function(ev)
-        local bufnr = ev.buf
-        local client = vim.lsp.get_client_by_id(ev.data.client_id)
-        if not client then
-            return
-        end
-        ---@diagnostic disable-next-line need-check-nil
-        if client.server_capabilities.completionProvider then
-            vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
-            -- vim.bo[bufnr].omnifunc = "v:lua.MiniCompletion.completefunc_lsp"
-        end
-        ---@diagnostic disable-next-line need-check-nil
-        if client.server_capabilities.definitionProvider then
-            vim.bo[bufnr].tagfunc = "v:lua.vim.lsp.tagfunc"
-        end
-
-        --- Disable semantic tokens
-        ---@diagnostic disable-next-line need-check-nil
-        client.server_capabilities.semanticTokensProvider = nil
-    end
-})
--- ^^^ LSP Attach ^^^ --
 
 -- ▾▾▾ C++ ▾▾▾ --
 vim.lsp.config.clangd = {
@@ -174,7 +143,10 @@ vim.lsp.config.basedpyright = {
                 autoImportCompletions = true,
                 useLibraryCodeForTypes = true,
                 diagnosticMode = "openFilesOnly",
-                typeCheckingMode = "strict",
+                typeCheckingMode = "standard",
+                reportWildcardImportFromLibrary = false,
+                reportMissingTypeStubs = false,
+                pythonVersion = "3.13",
                 inlayHints = {
                     variableTypes = true,
                     callArgumentNames = true,
@@ -185,6 +157,27 @@ vim.lsp.config.basedpyright = {
         },
     },
 }
+
+vim.lsp.config.ruff = {
+    name = "ruff",
+    cmd = { 'ruff', 'server' },
+    filetypes = { 'python' },
+    root_markers = { 'pyproject.toml', 'ruff.toml', '.ruff.toml', '.git' },
+    settings = {},
+    capabilities = (function()
+        local caps = vim.lsp.protocol.make_client_capabilities()
+        -- Disable code action capability entirely
+        caps.textDocument.codeAction = nil
+        return caps
+    end)(),
+    on_attach = function(client, bufnr)
+        -- Disable hover in favor of Pyright
+        client.server_capabilities.hoverProvider = false
+        -- Disable code actions - only use for formatting
+        client.server_capabilities.codeActionProvider = false
+    end,
+}
+
 -- ^^^ Python ^^^ --
 
 -- ▾▾▾ Bash ▾▾▾ --
@@ -315,6 +308,21 @@ end, {
 })
 -- ^^^ Commands ^^^ --
 
+-- Diagnostics --
+
+vim.diagnostic.config({
+    virtual_text = true,
+    virtual_lines = false,
+    float = {
+        source = "always",
+        border = "rounded",
+    },
+    signs = true,
+    underline = true,
+    update_in_insert = false,
+    severity_sort = true,
+})
+
 --- Key Bindings ---
 vim.keymap.set('n', '<leader>q', vim.lsp.buf.hover, {})
 vim.keymap.set('n', '<leader>g', vim.lsp.buf.definition, {})
@@ -338,6 +346,7 @@ vim.lsp.enable({
     "jsonls",
     "lua_ls",
     "basedpyright",
+    "ruff",
     "markdown_oxide",
     "gopls"
 })

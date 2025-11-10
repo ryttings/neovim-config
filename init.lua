@@ -93,5 +93,6 @@ vim.filetype.add({
 })
 
 vim.opt.conceallevel = 2
+vim.opt.signcolumn = "yes:1"
 
 require("lsp")
