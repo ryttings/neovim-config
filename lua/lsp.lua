@@ -1,5 +1,5 @@
--- Lsp capabilities and on_attach {{{
 -- Here we grab default Neovim capabilities and extend them with ones we want on top
+-- ▾▾▾ Setup ▾▾▾ --
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
 capabilities.textDocument.foldingRange = {
@@ -19,15 +19,14 @@ vim.lsp.config("*", {
         end
     end,
 })
--- }}}
 
--- Disable the default keybinds {{{
+-- Disable the default keybinds
 for _, bind in ipairs({ "grn", "gra", "gri", "grr", "grt" }) do
     pcall(vim.keymap.del, "n", bind)
 end
--- }}}
+-- ^^^ Setup ^^^ --
 
--- Create keybindings, commands, inlay hints and autocommands on LSP attach {{{
+-- ▾▾▾ LSP Attach ▾▾▾ --
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(ev)
         local bufnr = ev.buf
@@ -45,19 +44,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
             vim.bo[bufnr].tagfunc = "v:lua.vim.lsp.tagfunc"
         end
 
-        -- -- nightly has inbuilt completions, this can replace all completion plugins
-        -- if client:supports_method("textDocument/completion", bufnr) then
-        --   -- Enable auto-completion
-        --   vim.lsp.completion.enable(true, client.id, bufnr, { autotrigger = true })
-        -- end
-
         --- Disable semantic tokens
         ---@diagnostic disable-next-line need-check-nil
         client.server_capabilities.semanticTokensProvider = nil
     end
 })
+-- ^^^ LSP Attach ^^^ --
 
-
+-- ▾▾▾ C++ ▾▾▾ --
 vim.lsp.config.clangd = {
     cmd = {
         "clangd",
@@ -85,10 +79,10 @@ vim.lsp.config.clangd = {
         vim.uv.cwd(),
     },
 }
+vim.lsp.enable("clangd")
+-- ^^^ C++ ^^^ --
 
--- }}}
-
--- Markdown Oxide {{{
+-- ▾▾▾ Markdown Oxide ▾▾▾ --
 vim.lsp.config('markdown_oxide', {
     cmd = { "markdown-oxide" },
     capabilities = vim.tbl_deep_extend('force', capabilities, {
@@ -101,27 +95,28 @@ vim.lsp.config('markdown_oxide', {
     filetypes = { 'markdown' },
     root_markers = { '.moxide.toml', '.obsidian', '.git' },
 })
---- }}}
+vim.lsp.enable("markdown_oxide")
+-- ^^^ Markdown Oxide ^^^ --
 
--- CMake {{{
+-- ▾▾▾ CMake ▾▾▾ --
 vim.lsp.config('cmake', {
     cmd = { "cmake-language-server" },
     capabilities = capabilities,
     filetypes = { 'cmake' },
     root_markers = { 'CMakeLists.txt' },
 })
---- }}}
+-- ^^^ CMake ^^^ --
 
--- JSON {{{
+-- ▾▾▾ json ▾▾▾ --
 vim.lsp.config('jsonls', {
     cmd = { "vscode-json-language-server" },
     capabilities = capabilities,
     filetypes = { 'json' },
     root_markers = {},
 })
---- }}}
+-- ^^^ json ^^^ --
 
--- Rust {{{
+-- ▾▾▾ Rust ▾▾▾ --
 vim.lsp.config.rust_analyzer = {
     filetypes = { "rust" },
     cmd = { "rust-analyzer" },
@@ -132,12 +127,10 @@ vim.lsp.config.rust_analyzer = {
         if out.code ~= 0 then
             return cb(root)
         end
-
         local ok, result = pcall(vim.json.decode, out.stdout)
         if ok and result.workspace_root then
             return cb(result.workspace_root)
         end
-
         return cb(root)
     end,
     settings = {
@@ -149,9 +142,10 @@ vim.lsp.config.rust_analyzer = {
         },
     },
 }
--- }}}
+vim.lsp.enable("rust_analyzer")
+-- ^^^ Rust ^^^ --
 
--- Lua {{{
+-- ▾▾▾ Lua ▾▾▾ --
 vim.lsp.config.lua_ls = {
     cmd = { "lua-language-server" },
     filetypes = { "lua" },
@@ -164,17 +158,15 @@ vim.lsp.config.lua_ls = {
         },
     },
 }
--- }}}
+vim.lsp.enable("lua_ls")
+-- ^^^ Lua ^^^ --
 
--- Python {{{
+-- ▾▾▾ Python ▾▾▾ --
 vim.lsp.config.basedpyright = {
     name = "basedpyright",
     filetypes = { "python" },
     cmd = { "basedpyright-langserver", "--stdio" },
     settings = {
-        python = {
-            venvPath = vim.fn.expand("~") .. "/.virtualenvs",
-        },
         basedpyright = {
             disableOrganizeImports = true,
             analysis = {
@@ -193,52 +185,28 @@ vim.lsp.config.basedpyright = {
         },
     },
 }
+-- ^^^ Python ^^^ --
 
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "python",
-    callback = function()
-        local ok, venv = pcall(require, "rj.extras.venv")
-        if ok then
-            venv.setup()
-        end
-        local root = vim.fs.root(0, {
-            "pyproject.toml",
-            "setup.py",
-            "setup.cfg",
-            "requirements.txt",
-            "Pipfile",
-            "pyrightconfig.json",
-            ".git",
-            vim.uv.cwd(),
-        })
-        local client =
-            vim.lsp.start(vim.tbl_extend("force", vim.lsp.config.basedpyright, { root_dir = root }), { attach = false })
-        if client then
-            vim.lsp.buf_attach_client(0, client)
-        end
-    end,
-})
--- }}}
-
--- Bash {{{
+-- ▾▾▾ Bash ▾▾▾ --
 vim.lsp.config.bashls = {
     cmd = { "bash-language-server", "start" },
-    filetypes = { "bash", "sh", "zsh" },
-    root_markers = { ".git", vim.uv.cwd() },
-    settings = {
-        bashIde = {
-            globPattern = vim.env.GLOB_PATTERN or "*@(.sh|.inc|.bash|.command)",
-        },
-    },
+    filetypes = { "bash", "sh", "zsh" }
 }
--- }}}
+vim.lsp.enable("bashls")
+-- ^^^ Bash ^^^ --
 
--- HTML {{{
+-- vim.lsp.config.beautysh = {
+--     cmd = { "beautysh" },
+--     filetypes = { "bash", "sh", "zsh" }
+-- }
+-- vim.lsp.enable("beautysh")
+-- ^^^ Bash ^^^ --
+
+-- ▾▾▾ HTML ▾▾▾ --
 vim.lsp.config.htmlls = {
     cmd = { "vscode-html-language-server", "--stdio" },
     filetypes = { "html" },
     root_markers = { "package.json", ".git" },
-
     init_options = {
         configurationSection = { "html", "css", "javascript" },
         embeddedLanguages = {
@@ -248,9 +216,9 @@ vim.lsp.config.htmlls = {
         provideFormatter = true,
     },
 }
--- }}}
+-- ^^^ HTML ^^^ --
 
--- Go {{{
+-- ▾▾▾ Go ▾▾▾ --
 vim.lsp.config.gopls = {
     cmd = { "gopls" },
     filetypes = { "go", "gotempl", "gowork", "gomod" },
@@ -271,9 +239,10 @@ vim.lsp.config.gopls = {
         },
     },
 }
--- }}}
+vim.lsp.enable("gopls")
+-- ^^^ Go ^^^ --
 
--- Start, Stop, Restart, Log commands {{{
+-- ▾▾▾ Commands ▾▾▾ --
 vim.api.nvim_create_user_command("LspStart", function()
     vim.cmd.e()
 end, { desc = "Starts LSP clients in the current buffer" })
@@ -344,7 +313,7 @@ vim.api.nvim_create_user_command("LspInfo", function()
 end, {
     desc = "Get all the information about all LSP attached",
 })
--- }}}
+-- ^^^ Commands ^^^ --
 
 --- Key Bindings ---
 vim.keymap.set('n', '<leader>q', vim.lsp.buf.hover, {})

@@ -20,7 +20,7 @@ return {
                     "lua_ls",
                     "basedpyright",
                     "markdown_oxide",
-                    "gopls"
+                    -- "beautysh"
                 }
             })
         end
