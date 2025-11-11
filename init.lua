@@ -2,15 +2,14 @@ vim.opt.syntax = "on"
 vim.opt.number = true
 vim.opt.formatoptions:remove({ "o" })
 
---vim.cmd('cd $MYVIMRC/..')
--- vim.cmd('cd D:/UsefulThings')
 vim.cmd('set expandtab')
-vim.cmd('set tabstop=3')
-vim.cmd('set softtabstop=3')
-vim.cmd('set shiftwidth=3')
+vim.cmd('set tabstop=4')
+vim.cmd('set softtabstop=4')
+vim.cmd('set shiftwidth=4')
+vim.opt.linebreak = true
+
 vim.cmd('let mapleader = ","')
 vim.cmd('map <leader>h :noh<CR>')
-vim.opt.linebreak = true
 vim.keymap.set('n', '<Up>', 'gk', { noremap = true })
 vim.keymap.set('n', '<Left>', 'gh', { noremap = true })
 vim.keymap.set('n', '<Down>', 'gj', { noremap = true })
@@ -25,6 +24,7 @@ vim.keymap.set('n', '<C-s><C-l>', ':vsp<CR>')
 vim.keymap.set('n', '<C-s><C-h>', ':vsp<CR>')
 vim.keymap.set('n', '<C-s><C-j>', ':spl<CR>')
 vim.keymap.set('n', '<C-s><C-k>', ':spl<CR>')
+vim.keymap.set('c', 'wqa', 'wa<CR>:qa<CR>', { noremap = true })
 vim.keymap.set('n', '<C-a>', 'gg0vG$')
 
 vim.keymap.set('n', '<C-Right>', '<C-w><S-l>')
@@ -34,9 +34,30 @@ vim.keymap.set('n', '<C-Down>', '<C-w><S-j>')
 vim.keymap.set('n', '<C-=>', '<C-w>=', { noremap = true })
 vim.keymap.set('v', '<C-S-c>', '"+y')
 
+vim.keymap.set('v', '<leader>cl', ':s/\\U/\\l&/g', { noremap = true }, { desc = 'Convert to lowercase' })
+vim.keymap.set('v', '<leader>cu', ':s/\\l/\\U&/g', { noremap = true }, { desc = 'Convert to uppercase' })
+
 vim.cmd('autocmd TermOpen * setlocal nonumber norelativenumber')
-vim.keymap.set('c', 'wqa', 'wa<CR>:qa<CR>', { noremap = true })
 vim.opt.termguicolors = false
+-- vim.opt.shell = 'nu.exe'
+
+local python_cmd = os.getenv("PYTHON") or "python3"
+local usefulthings = os.getenv("USEFULTHINGS") or "~/usefulthings"
+local cmd_shell = os.getenv("CMD_SHELL") or vim.opt.shell
+
+local llm_py = "llm.py"
+local llm_script = string.format("%s/tools/%s", usefulthings, llm_py)
+vim.keymap.set('c', 'llm',
+    function()
+        vim.cmd('new')
+        local term_shell = vim.opt.shell
+        vim.opt.shell = cmd_shell
+        vim.cmd(string.format('terminal %s %s', python_cmd, llm_script))
+        vim.opt.shell = term_shell
+    end)
+
+-- Copy full path to clipboard
+vim.keymap.set('n', '<leader>p', function() vim.fn.setreg('+', vim.fn.expand('%:p')) end)
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -50,38 +71,26 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
     })
 end
 vim.opt.rtp:prepend(lazypath)
--- vim.cmd("set clipboard+=unnamedplus")
-
-vim.keymap.set('c', 'llm',
-    function()
-        vim.cmd('new')
-        vim.cmd('terminal python3 /home/srytting/usefulthings/tools/llm.py')
-    end)
-
--- Copy full path to clipboard
-vim.keymap.set('n', '<leader>p', function() vim.fn.setreg('+', vim.fn.expand('%:p')) end)
 
 require("lazy").setup("plugins")
 
-function SendLineToGdb()
-  local line = vim.api.nvim_get_current_line()
-  -- Get all bufs and find terminal
-  local bufs = vim.api.nvim_list_bufs()
-  for _, buf in ipairs(bufs) do
-    if vim.api.nvim_buf_get_option(buf, 'buftype') == 'terminal' then
-      local name = vim.api.nvim_buf_get_name(buf)
-      if string.find(name, "fish") then
-         local chan = vim.api.nvim_buf_get_var(buf, 'terminal_job_id')
-         vim.api.nvim_chan_send(chan, line .. "\n")
-         return
-      else
-         print(name)
-      end
-    end
-  end
-  print("No terminals found.")
-end
-vim.keymap.set('n', '<leader>v', '<cmd>lua SendLineToGdb()<cr>')
+local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+parser_config.template_language = {
+    install_info = {
+        url = "~/repos/template/treesitter-parser",
+        files = { "src/parser.c" },
+        generate_requires_npm = false,
+        requires_generate_from_grammar = false,
+    },
+    filetype = "template_language",
+}
+
+-- Register the filetype
+vim.filetype.add({
+    extension = {
+        tp = "template_language",
+    },
+})
 
 vim.opt.conceallevel = 2
 
@@ -90,3 +99,5 @@ vim.api.nvim_create_autocmd("BufEnter", {
     vim.opt.formatoptions:remove { "o" }
   end,
 })
+
+require("lsp")
