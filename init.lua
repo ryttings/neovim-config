@@ -1,5 +1,6 @@
-vim.o.syntax = "on"
-vim.o.number = true
+vim.opt.syntax = "on"
+vim.opt.number = true
+vim.opt.formatoptions:remove({ "o" })
 
 --vim.cmd('cd $MYVIMRC/..')
 -- vim.cmd('cd D:/UsefulThings')
@@ -83,3 +84,9 @@ end
 vim.keymap.set('n', '<leader>v', '<cmd>lua SendLineToGdb()<cr>')
 
 vim.opt.conceallevel = 2
+
+vim.api.nvim_create_autocmd("BufEnter", {
+  callback = function()
+    vim.opt.formatoptions:remove { "o" }
+  end,
+})
