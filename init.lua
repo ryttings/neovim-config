@@ -39,7 +39,7 @@ vim.keymap.set('v', '<leader>cu', ':s/\\l/\\U&/g', { noremap = true }, { desc = 
 
 vim.cmd('autocmd TermOpen * setlocal nonumber norelativenumber')
 vim.opt.termguicolors = false
-vim.opt.shell = 'nu.exe'
+vim.opt.shell = os.getenv("SHELL")
 
 local python_cmd = os.getenv("PYTHON") or "python3"
 local usefulthings = os.getenv("USEFULTHINGS") or "~/usefulthings"
@@ -48,6 +48,8 @@ local cmd_shell = os.getenv("CMD_SHELL") or vim.opt.shell
 local llm_py = "llm.py"
 
 local llm_script = string.format("%s/tools/%s", usefulthings, llm_py)
+print(llm_script)
+
 vim.keymap.set('c', 'llm',
     function()
         vim.cmd('new')
