@@ -42,12 +42,11 @@ vim.opt.termguicolors = false
 vim.opt.shell = os.getenv("SHELL")
 
 local python_cmd = os.getenv("PYTHON") or "python3"
-local usefulthings = os.getenv("USEFULTHINGS") or "~/usefulthings"
 local cmd_shell = os.getenv("CMD_SHELL") or vim.opt.shell
 
-local llm_py = "llm.py"
+local home = os.getenv("HOME")
 
-local llm_script = string.format("%s/tools/%s", usefulthings, llm_py)
+local llm_script = string.format("%s/dotfiles/scripts/%s", home, "llm.py")
 print(llm_script)
 
 vim.keymap.set('c', 'llm',
