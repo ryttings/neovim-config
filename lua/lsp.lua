@@ -24,18 +24,14 @@ end
 vim.lsp.config.clangd = {
     cmd = {
         "clangd",
-        "-j=" .. 2,
         "--background-index",
-        "--clang-tidy",
-        "--inlay-hints",
-        "--fallback-style=llvm",
-        "--all-scopes-completion",
-        "--completion-style=detailed",
-        "--header-insertion=iwyu",
-        "--header-insertion-decorators",
-        "--pch-storage=memory",
+        "--function-arg-placeholders=0",
+        "-j=8",
     },
     filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
+    capabilities = vim.tbl_deep_extend('force', capabilities, {
+        offsetEncoding = { "utf-16" },
+    }),
     root_markers = {
         "CMakeLists.txt",
         ".clangd",
