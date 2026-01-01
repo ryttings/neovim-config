@@ -81,7 +81,7 @@ parser_config.template_language = {
     install_info = {
         url = "~/repos/template/treesitter-parser",
         files = { "src/parser.c" },
-        generate_requires_npm = false,
+        generate_requires_npm = true,
         requires_generate_from_grammar = false,
     },
     filetype = "template_language",
