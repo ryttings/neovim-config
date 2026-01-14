@@ -14,8 +14,8 @@ return {
                 ensure_installed = {
                     "clangd",
                     "rust_analyzer",
-                    "cmake",
                     "bashls",
+                    "svls",
                     "jsonls",
                     "lua_ls",
                     "basedpyright",
