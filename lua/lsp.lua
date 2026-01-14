@@ -100,10 +100,16 @@ vim.lsp.config.rust_analyzer = {
     end,
     settings = {
         autoformat = false,
+        diagnosticMode = {
+            enable = false
+        },
         ["rust-analyzer"] = {
             check = {
                 command = "clippy",
             },
+            inlayHints = {
+                enable = false
+            }
         },
     },
 }
