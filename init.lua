@@ -46,6 +46,7 @@ local cmd_shell = os.getenv("CMD_SHELL") or vim.opt.shell
 
 local home = os.getenv("HOME")
 
+-- local llm_script = string.format("%s/dotfiles/scripts/%s", home, "gemini.py")
 local llm_script = string.format("%s/dotfiles/scripts/%s", home, "llm.py")
 print(llm_script)
 
@@ -55,6 +56,7 @@ vim.keymap.set('c', 'llm',
         local term_shell = vim.opt.shell
         vim.opt.shell = cmd_shell
         vim.cmd(string.format('terminal %s %s', python_cmd, llm_script))
+        vim.cmd("set filetype=markdown")
         vim.opt.shell = term_shell
     end)
 
