@@ -99,6 +99,22 @@ vim.filetype.add({
 vim.opt.conceallevel = 2
 vim.opt.signcolumn = "yes:1"
 
+-- Backup files
+-- Double slash to build file name from the complete path to the file with all path separators changed to percent '%' signs
+vim.opt.backupdir = string.format("%s/.nvim-backup/", home)
+vim.opt.backup = true
+vim.opt.undofile = true
+
+-- Add timestamp as extension for backup files
+vim.api.nvim_create_autocmd('BufWritePre', {
+  group = vim.api.nvim_create_augroup('timestamp_backupext', { clear = true }),
+  desc = 'Add timestamp to backup extension',
+  pattern = '*',
+  callback = function()
+    vim.opt.backupext = '-' .. vim.fn.strftime('%Y%m%d%H%M')
+  end,
+})
+
 vim.api.nvim_create_autocmd("BufEnter", {
   callback = function()
     vim.opt.formatoptions:remove { "o" }
