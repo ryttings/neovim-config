@@ -33,11 +33,11 @@ vim.lsp.config.clangd = {
         offsetEncoding = { "utf-16" },
     }),
     root_markers = {
-        "CMakeLists.txt",
+        "compile_commands.json",
         ".clangd",
         ".clang-tidy",
         ".clang-format",
-        "compile_commands.json",
+        "CMakeLists.txt",
         "compile_flags.txt",
         "configure.ac",
         ".git",
@@ -107,7 +107,7 @@ vim.lsp.config.rust_analyzer = {
         },
         ["rust-analyzer"] = {
             check = {
-                command = "clippy",
+                command = "check",
             },
             inlayHints = {
                 enable = false
