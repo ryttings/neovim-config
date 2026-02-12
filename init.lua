@@ -10,6 +10,7 @@ vim.opt.linebreak = true
 
 vim.cmd('let mapleader = ","')
 vim.cmd('map <leader>h :noh<CR>')
+vim.keymap.set('n', '<leader>b', ':GitBlameToggle<CR>', { noremap = true })
 vim.keymap.set('n', '<Up>', 'gk', { noremap = true })
 vim.keymap.set('n', '<Left>', 'gh', { noremap = true })
 vim.keymap.set('n', '<Down>', 'gj', { noremap = true })
@@ -96,7 +97,7 @@ vim.filetype.add({
     },
 })
 
-vim.opt.conceallevel = 2
+-- vim.opt.conceallevel = 2
 vim.opt.signcolumn = "yes:1"
 
 -- Backup files
