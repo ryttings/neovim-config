@@ -25,7 +25,7 @@ vim.lsp.config.clangd = {
     cmd = {
         "clangd",
         "--background-index",
-        "--function-arg-placeholders=0",
+        -- "--function-arg-placeholders=0",
         "-j=4",
     },
     filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },

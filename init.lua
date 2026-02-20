@@ -61,6 +61,14 @@ vim.keymap.set('c', 'llm',
         vim.opt.shell = term_shell
     end)
 
+function InspectLSP()
+  local content = vim.inspect(vim.lsp._enabled_configs.clangd, {depth = nil})
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(content, '\n'))
+  vim.api.nvim_set_current_buf(buf)
+  vim.bo.filetype = 'lua'
+end
+
 -- Copy full path to clipboard
 vim.keymap.set('n', '<leader>p', function() vim.fn.setreg('+', vim.fn.expand('%:p')) end)
 
