@@ -3,9 +3,9 @@ vim.opt.number = true
 vim.opt.formatoptions:remove({ "o" })
 
 vim.cmd('set expandtab')
-vim.cmd('set tabstop=4')
-vim.cmd('set softtabstop=4')
-vim.cmd('set shiftwidth=4')
+vim.cmd('set tabstop=3')
+vim.cmd('set softtabstop=3')
+vim.cmd('set shiftwidth=3')
 vim.opt.linebreak = true
 
 vim.cmd('let mapleader = ","')

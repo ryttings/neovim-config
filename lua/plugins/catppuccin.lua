@@ -35,3 +35,28 @@ return {
 --         vim.cmd [[colorscheme tokyodark]]
 --     end,
 -- }
+
+-- return {
+--     "folke/tokyonight.nvim",
+--     opts = {
+--         -- custom options here
+--     },
+--     lazy = false,
+--     priority = 1000,
+--     config = function(_, opts)
+--         vim.cmd [[colorscheme tokyonight-day]]
+--     end,
+-- }
+
+
+
+-- return {
+--     "ellisonleao/gruvbox.nvim",
+--     priority = 1000,
+--     config = function()
+--         vim.o.background = "light"
+--         vim.cmd([[colorscheme gruvbox]])
+--     end
+--     ,
+--     opts = ...
+-- }
