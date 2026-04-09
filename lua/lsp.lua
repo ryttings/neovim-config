@@ -26,7 +26,7 @@ vim.lsp.config.clangd = {
       "clangd",
       "--background-index",
       "--clang-tidy",
-      "-j=4",
+      "-j=8",
    },
    filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
    capabilities = vim.tbl_deep_extend('force', capabilities, {
