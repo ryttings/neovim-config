@@ -73,7 +73,7 @@ end
 vim.keymap.set('n', '<leader>p', function() vim.fn.setreg('+', vim.fn.expand('%:p')) end)
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
     vim.fn.system({
         "git",
         "clone",
@@ -105,7 +105,7 @@ vim.filetype.add({
     },
 })
 
--- vim.opt.conceallevel = 2
+vim.opt.conceallevel = 0
 vim.opt.signcolumn = "yes:1"
 
 -- Backup files

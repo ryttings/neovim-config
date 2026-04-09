@@ -269,7 +269,7 @@ vim.api.nvim_create_user_command("LspRestart", function()
    for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
       client:stop(true)
       if vim.tbl_count(client.attached_buffers) > 0 then
-         detach_clients[client.name] = { client, vim.lsp.get_buffers_by_client_id(client.id) }
+         detach_clients[client.name] = { client, vim.tbl_keys(client.attached_buffers) }
       end
    end
    local timer = vim.uv.new_timer()
@@ -329,11 +329,11 @@ vim.diagnostic.config({
 
 --- Virtual hover ---
 
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-   vim.lsp.handlers.hover, {
-      border = "rounded" -- "none", "single", "double", "rounded", "solid", "shadow"
-   }
-)
+vim.lsp.handlers["textDocument/hover"] = function(err, result, ctx, config)
+   return vim.lsp.handlers.hover(err, result, ctx, vim.tbl_extend("force", config or {}, {
+      border = "rounded", -- "none", "single", "double", "rounded", "solid", "shadow"
+   }))
+end
 
 --- Key Bindings ---
 vim.keymap.set('n', '<leader>q', vim.lsp.buf.hover, {})
