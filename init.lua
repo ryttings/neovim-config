@@ -1,12 +1,42 @@
 vim.opt.syntax = "on"
 vim.opt.number = true
+-- vim.opt.numberwidth = 2 -- Width of the line number column
 vim.opt.formatoptions:remove({ "o" })
 
-vim.cmd('set expandtab')
-vim.cmd('set tabstop=3')
-vim.cmd('set softtabstop=3')
-vim.cmd('set shiftwidth=3')
+vim.opt.tabstop = 3 -- Number of spaces for a tab
+vim.opt.expandtab = true -- Use spaces instead of tabs
+vim.opt.softtabstop = 3 -- Number of spaces for a tab when editing
+vim.opt.shiftwidth = 3 -- Number of spaces for autoindent
+vim.opt.shiftround = true -- Round indent to multiple of shiftwidth
+
 vim.opt.linebreak = true
+vim.opt.list = true -- Show whitespace characters
+vim.opt.listchars = "tab: ,multispace:|   " -- Characters to show for tabs, spaces, and end of line
+vim.opt.wrap = true -- line wrapping
+vim.opt.cursorline = true -- Highlight the current line
+vim.opt.scrolloff = 8 -- Keep 8 lines above and below the cursor
+
+vim.opt.conceallevel = 0
+vim.opt.signcolumn = "yes:1"
+vim.opt.termguicolors = false
+vim.opt.shell = os.getenv("SHELL")
+vim.opt.ignorecase = true -- Ignore case in search
+vim.opt.swapfile = false -- Disable swap files
+vim.opt.autoindent = true -- Enable auto indentation
+
+vim.opt.completeopt = { "menuone", "popup", "noinsert" } -- Options for completion menu
+vim.opt.winborder = "rounded" -- Use rounded borders for windows
+vim.opt.hlsearch = false -- Disable highlighting of search results
+
+vim.opt.backupdir = string.format("%s/.nvim-backup/", home)
+vim.opt.backup = true
+vim.opt.undofile = true
+
+local python_cmd = os.getenv("PYTHON") or "python3"
+local cmd_shell = os.getenv("CMD_SHELL") or vim.opt.shell
+local home = os.getenv("HOME")
+
+vim.cmd.filetype("plugin indent on") -- Enable filetype detection, plugins, and indentation
 
 vim.cmd('let mapleader = ","')
 vim.cmd('map <leader>h :noh<CR>')
@@ -39,13 +69,6 @@ vim.keymap.set('v', '<leader>cl', ':s/\\U/\\l&/g', { noremap = true }, { desc = 
 vim.keymap.set('v', '<leader>cu', ':s/\\l/\\U&/g', { noremap = true }, { desc = 'Convert to uppercase' })
 
 vim.cmd('autocmd TermOpen * setlocal nonumber norelativenumber')
-vim.opt.termguicolors = false
-vim.opt.shell = os.getenv("SHELL")
-
-local python_cmd = os.getenv("PYTHON") or "python3"
-local cmd_shell = os.getenv("CMD_SHELL") or vim.opt.shell
-
-local home = os.getenv("HOME")
 
 -- local llm_script = string.format("%s/dotfiles/scripts/%s", home, "gemini.py")
 local llm_script = string.format("%s/dotfiles/scripts/%s", home, "llm.py")
@@ -72,31 +95,16 @@ end
 -- Copy full path to clipboard
 vim.keymap.set('n', '<leader>p', function() vim.fn.setreg('+', vim.fn.expand('%:p')) end)
 
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.uv.fs_stat(lazypath) then
-    vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable", -- latest stable release
-        lazypath,
-    })
-end
-vim.opt.rtp:prepend(lazypath)
-
-require("lazy").setup("plugins")
-
-local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
-parser_config.template_language = {
-    install_info = {
-        url = "~/repos/template/treesitter-parser",
-        files = { "src/parser.c" },
-        generate_requires_npm = true,
-        requires_generate_from_grammar = false,
-    },
-    filetype = "template_language",
-}
+-- local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+-- parser_config.template_language = {
+--     install_info = {
+--         url = "~/repos/template/treesitter-parser",
+--         files = { "src/parser.c" },
+--         generate_requires_npm = true,
+--         requires_generate_from_grammar = false,
+--     },
+--     filetype = "template_language",
+-- }
 
 -- Register the filetype
 vim.filetype.add({
@@ -104,15 +112,6 @@ vim.filetype.add({
         tp = "template_language",
     },
 })
-
-vim.opt.conceallevel = 0
-vim.opt.signcolumn = "yes:1"
-
--- Backup files
--- Double slash to build file name from the complete path to the file with all path separators changed to percent '%' signs
-vim.opt.backupdir = string.format("%s/.nvim-backup/", home)
-vim.opt.backup = true
-vim.opt.undofile = true
 
 -- Add timestamp as extension for backup files
 vim.api.nvim_create_autocmd('BufWritePre', {
@@ -131,3 +130,9 @@ vim.api.nvim_create_autocmd("BufEnter", {
 })
 
 require("lsp")
+require('plugins')
+-- require('configs')
+require('keymaps')
+require('autocmds')
+-- require('statusline')
+
