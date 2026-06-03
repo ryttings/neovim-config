@@ -182,6 +182,14 @@ vim.keymap.set("n", "<leader>;", function()
 end
 )
 
-vim.pack.add({ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" })
-vim.pack.add({ src = "https://github.com/petertriho/nvim-scrollbar" })
+vim.pack.add({ "https://github.com/petertriho/nvim-scrollbar" })
 
+vim.pack.add({
+    'https://github.com/nvim-treesitter/nvim-treesitter',
+    'https://github.com/MeanderingProgrammer/render-markdown.nvim',
+})
+require('render-markdown').setup({
+   file_types = {'markdown'}
+}) -- only mandatory if you want to set custom options
+
+vim.pack.add({ "https://github.com/nvim-treesitter/nvim-treesitter-textobjects" })
