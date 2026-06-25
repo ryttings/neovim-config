@@ -185,11 +185,39 @@ end
 vim.pack.add({ "https://github.com/petertriho/nvim-scrollbar" })
 
 vim.pack.add({
-    'https://github.com/nvim-treesitter/nvim-treesitter',
-    'https://github.com/MeanderingProgrammer/render-markdown.nvim',
+   'https://github.com/nvim-treesitter/nvim-treesitter',
+   'https://github.com/MeanderingProgrammer/render-markdown.nvim',
 })
 require('render-markdown').setup({
-   file_types = {'markdown'}
+   file_types = { 'markdown' }
 }) -- only mandatory if you want to set custom options
 
 vim.pack.add({ "https://github.com/nvim-treesitter/nvim-treesitter-textobjects" })
+vim.pack.add({ "https://github.com/EdenEast/nightfox.nvim" })
+vim.cmd("colorscheme carbonfox")
+
+vim.pack.add({ "https://github.com/sindrets/diffview.nvim" })
+vim.pack.add({ "https://github.com/lionyxml/gitlineage.nvim" })
+require("gitlineage").setup()
+
+vim.pack.add({ "https://github.com/stevearc/conform.nvim" })
+require("conform").setup({
+   formatters_by_ft = {
+      -- mdformat normalizes the markdown, cbfmt formats the code blocks within it
+      markdown = { "mdformat", "cbfmt" },
+   },
+   formatters = {
+      cbfmt = {
+         prepend_args = { "--config", vim.fn.stdpath("config") .. "/cbfmt.toml" },
+      },
+   },
+})
+
+vim.pack.add({ "https://github.com/f-person/git-blame.nvim" })
+require("gitblame").setup(
+   {
+      enabled = false, -- if you want to enable the plugin
+      message_template = " • <author> • <date>", -- template for the blame message, check the Message template section for more options
+      date_format = "%m-%d-%Y", -- template for the date, check Date format section for more options
+      virtual_text_column = 1, -- virtual text start column, check Start virtual text at column section for more options
+   })

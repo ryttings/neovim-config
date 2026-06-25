@@ -1,0 +1,14 @@
+# Config for cbfmt — formats fenced code blocks inside markdown.
+# Each command receives the code block on stdin and must print the result to stdout.
+# Only formatters that are actually installed are listed here.
+
+[languages]
+python = ["ruff format -"]
+rust = ["rustfmt --edition 2021"]
+c = ["clang-format"]
+cpp = ["clang-format"]
+json = ["python3 -m json.tool"]
+
+[global]
+# Format even when a block's language has no configured formatter (leaves it untouched).
+enabled = true

@@ -21,30 +21,30 @@ end
 -- ^^^ Setup ^^^ --
 
 -- ▾▾▾ C++ ▾▾▾ --
--- vim.lsp.config.clangd = {
---    cmd = {
---       "clangd",
---       "--background-index",
---       "--clang-tidy",
---       "-j=8",
---    },
---    filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
---    capabilities = vim.tbl_deep_extend('force', capabilities, {
---       offsetEncoding = { "utf-16" },
---    }),
---    root_markers = {
---       "compile_commands.json",
---       ".clangd",
---       ".clang-tidy",
---       ".clang-format",
---       "CMakeLists.txt",
---       "compile_flags.txt",
---       "configure.ac",
---       ".git",
---       vim.uv.cwd(),
---    },
--- }
--- vim.lsp.enable("clangd")
+vim.lsp.config.clangd = {
+   cmd = {
+      "clangd",
+      "--background-index",
+      "--clang-tidy",
+      "-j=8",
+   },
+   filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
+   capabilities = vim.tbl_deep_extend('force', capabilities, {
+      offsetEncoding = { "utf-16" },
+   }),
+   root_markers = {
+      "compile_commands.json",
+      ".clangd",
+      ".clang-tidy",
+      ".clang-format",
+      "CMakeLists.txt",
+      "compile_flags.txt",
+      "configure.ac",
+      ".git",
+      vim.uv.cwd(),
+   },
+}
+vim.lsp.enable("clangd")
 -- ^^^ C++ ^^^ --
 
 -- ▾▾▾ Markdown Oxide ▾▾▾ --
@@ -128,6 +128,13 @@ vim.lsp.config.lua_ls = {
          telemetry = {
             enable = false,
          },
+         format = {
+            enable = true,
+            defaultConfig = {
+               indent_style = "space",
+               indent_size = "3",
+            },
+         },
       },
    },
 }
@@ -139,6 +146,7 @@ vim.lsp.config.basedpyright = {
    name = "basedpyright",
    filetypes = { "python" },
    cmd = { "basedpyright-langserver", "--stdio" },
+   root_markers = { "pyrightconfig.json", "pyproject.toml" },
    settings = {
       basedpyright = {
          disableOrganizeImports = true,
@@ -150,7 +158,7 @@ vim.lsp.config.basedpyright = {
             typeCheckingMode = "basic",
             reportWildcardImportFromLibrary = false,
             reportMissingTypeStubs = false,
-            pythonVersion = "3.13",
+            pythonVersion = "3.14",
             inlayHints = {
                variableTypes = true,
                callArgumentNames = true,
@@ -161,27 +169,6 @@ vim.lsp.config.basedpyright = {
       },
    },
 }
-
--- vim.lsp.config.ruff = {
---     name = "ruff",
---     cmd = { 'ruff', 'server' },
---     filetypes = { 'python' },
---     root_markers = { 'pyproject.toml', 'ruff.toml', '.ruff.toml', '.git' },
---     settings = {},
---     capabilities = (function()
---         local caps = vim.lsp.protocol.make_client_capabilities()
---         -- Disable code action capability entirely
---         caps.textDocument.codeAction = nil
---         return caps
---     end)(),
---     on_attach = function(client, bufnr)
---         -- Disable hover in favor of Pyright
---         client.server_capabilities.hoverProvider = false
---         -- Disable code actions - only use for formatting
---         client.server_capabilities.codeActionProvider = false
---     end,
--- }
-
 -- ^^^ Python ^^^ --
 
 -- ▾▾▾ Bash ▾▾▾ --
@@ -336,20 +323,6 @@ vim.lsp.handlers["textDocument/hover"] = function(err, result, ctx, config)
 end
 
 --- Key Bindings ---
-vim.keymap.set('n', '<leader>q', vim.lsp.buf.hover, {})
-vim.keymap.set('n', '<leader>g', vim.lsp.buf.definition, {})
-vim.keymap.set('n', '<leader>gd', vim.lsp.buf.implementation, {})
-vim.keymap.set('n', '<leader>r', vim.lsp.buf.code_action, {})
-vim.keymap.set('n', '<F12>', vim.lsp.buf.references, {})
-vim.keymap.set('n', '<F1>', vim.lsp.buf.rename, {})
-vim.keymap.set('n', '<leader>w', vim.lsp.buf.format)
-vim.keymap.set('n', ')', function() vim.diagnostic.jump({ count = 1 }) end)
-vim.keymap.set('n', '(', function() vim.diagnostic.jump({ count = -1 }) end)
-
-vim.keymap.set('n', '<leader>d', function()
-   vim.diagnostic.open_float({ scope = "cursor" })
-end)
-
 vim.lsp.enable({
    "clangd",
    "rust_analyzer",

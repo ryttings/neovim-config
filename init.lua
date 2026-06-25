@@ -27,14 +27,15 @@ vim.opt.autoindent = true -- Enable auto indentation
 vim.opt.completeopt = { "menuone", "popup", "noinsert" } -- Options for completion menu
 vim.opt.winborder = "rounded" -- Use rounded borders for windows
 vim.opt.hlsearch = false -- Disable highlighting of search results
-
-vim.opt.backupdir = string.format("%s/.nvim-backup/", home)
 vim.opt.backup = true
 vim.opt.undofile = true
 
+local home = os.getenv("HOME")
+
+vim.opt.backupdir = string.format("%s/.nvim-backup/", home)
+
 local python_cmd = os.getenv("PYTHON") or "python3"
 local cmd_shell = os.getenv("CMD_SHELL") or vim.opt.shell
-local home = os.getenv("HOME")
 
 vim.cmd.filetype("plugin indent on") -- Enable filetype detection, plugins, and indentation
 
@@ -55,6 +56,7 @@ vim.keymap.set('n', '<C-s><C-l>', ':vsp<CR>')
 vim.keymap.set('n', '<C-s><C-h>', ':vsp<CR>')
 vim.keymap.set('n', '<C-s><C-j>', ':spl<CR>')
 vim.keymap.set('n', '<C-s><C-k>', ':spl<CR>')
+vim.keymap.set('n', '<leader>t', ':wincmd =<CR>')
 vim.keymap.set('c', 'wqa', 'wa<CR>:qa<CR>', { noremap = true })
 vim.keymap.set('n', '<C-a>', 'gg0vG$')
 
