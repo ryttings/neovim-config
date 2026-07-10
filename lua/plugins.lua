@@ -157,6 +157,7 @@ require('mini.surround').setup(
 require('mini.operators').setup()
 
 require('mini.icons').setup()
+require('mini.icons').mock_nvim_web_devicons()
 
 require('mini.files').setup({
    mappings = {
@@ -188,9 +189,17 @@ vim.pack.add({
    'https://github.com/nvim-treesitter/nvim-treesitter',
    'https://github.com/MeanderingProgrammer/render-markdown.nvim',
 })
+
 require('render-markdown').setup({
-   file_types = { 'markdown' }
-}) -- only mandatory if you want to set custom options
+   file_types = { 'markdown' },
+   latex = {
+      enabled = true,
+      converter = 'latex2text',
+      highlight = 'RenderMarkdownMath',
+      top_pad = 0,
+      bottom_pad = 0,
+   },
+})
 
 vim.pack.add({ "https://github.com/nvim-treesitter/nvim-treesitter-textobjects" })
 vim.pack.add({ "https://github.com/EdenEast/nightfox.nvim" })
@@ -211,6 +220,12 @@ require("conform").setup({
          prepend_args = { "--config", vim.fn.stdpath("config") .. "/cbfmt.toml" },
       },
    },
+})
+
+vim.pack.add({ "https://github.com/nvimdev/lspsaga.nvim" })
+require('lspsaga').setup({
+   -- breadcrumbs at the top of the window showing current LSP scope
+   symbol_in_winbar = { enabled = true },
 })
 
 vim.pack.add({ "https://github.com/f-person/git-blame.nvim" })

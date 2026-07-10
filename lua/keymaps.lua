@@ -4,7 +4,25 @@ vim.keymap.set("n", "<leader>bf", '<cmd>FzfLua buffers<CR>')
 vim.keymap.set("n", "<leader><Tab>", '<cmd>FzfLua tabs<CR>')
 vim.keymap.set("n", "<leader>s", '<cmd>FzfLua global<CR>')
 vim.keymap.set("n", "<leader>,", '<cmd>FzfLua combine pickers=oldfiles<CR>')
-vim.keymap.set("n", "<leader>f", '<cmd>FzfLua live_grep<CR>')
+-- grep_project fuzzy-matches over all lines; ctrl-g toggles back to regex live_grep
+vim.keymap.set("n", "<leader>f", '<cmd>FzfLua grep_project<CR>')
+vim.keymap.set("n", "<leader>c", function()
+   -- fuzzy grep scoped to the current file's directory (no subdirectories),
+   -- including git-ignored files
+   require("fzf-lua").grep({
+      search = "",
+      cwd = vim.fn.expand("%:p:h"),
+      rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --no-ignore --max-depth=1 -e",
+   })
+end)
+vim.keymap.set("n", "<leader>C", function()
+   -- like <leader>c but recursive into subdirectories
+   require("fzf-lua").grep({
+      search = "",
+      cwd = vim.fn.expand("%:p:h"),
+      rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --no-ignore -e",
+   })
+end)
 vim.keymap.set("n", "<leader>gs", '<cmd>FzfLua git_status<CR>')
 vim.keymap.set("n", "<leader>gd", '<cmd>FzfLua git_diff<CR>')
 vim.keymap.set("n", "<leader>gb", '<cmd>FzfLua git_bcommits<CR>')
