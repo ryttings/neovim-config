@@ -5,7 +5,7 @@ vim.keymap.set("n", "<leader><Tab>", '<cmd>FzfLua tabs<CR>')
 vim.keymap.set("n", "<leader>s", '<cmd>FzfLua global<CR>')
 vim.keymap.set("n", "<leader>,", '<cmd>FzfLua combine pickers=oldfiles<CR>')
 -- grep_project fuzzy-matches over all lines; ctrl-g toggles back to regex live_grep
-vim.keymap.set("n", "<leader>f", '<cmd>FzfLua grep_project<CR>')
+vim.keymap.set("n", "<leader>f", '<cmd>FzfLua live_grep<CR>')
 vim.keymap.set("n", "<leader>c", function()
    -- fuzzy grep scoped to the current file's directory (no subdirectories),
    -- including git-ignored files
@@ -42,7 +42,6 @@ vim.keymap.set('n', '<leader>w', function()
    -- and falls back to LSP formatting for every other filetype
    require('conform').format({ lsp_format = 'fallback' })
 end)
-vim.keymap.set('n', '<leader>x', vim.lsp.buf.code_action, {})
 vim.keymap.set('n', ')', function() vim.diagnostic.jump({ count = 1 }) end)
 vim.keymap.set('n', '(', function() vim.diagnostic.jump({ count = -1 }) end)
 
@@ -73,3 +72,6 @@ vim.keymap.set('n', '<leader>r', function()
       end,
    })
 end)
+
+-- Full code action list (leader-r auto-applies the first quickfix instead)
+vim.keymap.set('n', '<leader>R', vim.lsp.buf.code_action, {})
