@@ -17,7 +17,7 @@ autocmd('TextYankPost', {
 -- })
 
 -- Replace these languages with the ones you work with
-local ts_languages = { "lua", "python", "cpp", "c", "rust", "markdown", "template_language" }
+local ts_languages = { "lua", "python", "cpp", "c", "rust", "markdown", "template_language", "nu" }
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = ts_languages,
