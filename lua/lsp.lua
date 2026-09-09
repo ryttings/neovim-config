@@ -64,14 +64,16 @@ vim.lsp.enable("markdown_oxide")
 -- ^^^ Markdown Oxide ^^^ --
 
 -- ▾▾▾ CMake ▾▾▾ --
--- Seems to be broken as of 11.0.5
---
--- vim.lsp.config('cmake', {
---     cmd = { "cmake-language-server" },
---     capabilities = capabilities,
---     filetypes = { 'cmake' },
---     root_markers = { 'CMakeLists.txt' },
--- })
+
+vim.lsp.config('cmake', {
+   cmd = { "neocmakelsp", "stdio" },
+   capabilities = capabilities,
+   filetypes = { 'cmake' },
+   root_markers = { 'CMakeLists.txt' },
+   single_file_support = true,
+
+})
+
 -- ^^^ CMake ^^^ --
 
 -- ▾▾▾ json ▾▾▾ --
